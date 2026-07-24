@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSTEM // Hunter Interface</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!-- Fonts: Rajdhani (display / system feel) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=Orbitron:wght@600;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body class="min-h-screen">
+
+  <div class="bg-grid"></div>
+  <div class="bg-vignette"></div>
+  <div class="bg-scanline"></div>
+  <div id="particles"></div>
+
+  <!-- ================= LEVEL UP TOAST ================= -->
+  <div id="level-up-toast">
+    <div class="panel panel-purple px-10 py-6 text-center pulse-glow" style="box-shadow:0 0 50px rgba(168,85,247,0.5);">
+      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+          class="br"></span></div>
+      <p class="font-system text-sm text-purple-300 tracking-[0.3em] mb-2">LEVEL UP</p>
+      <p id="level-up-text" class="font-display text-4xl font-bold text-white">LEVEL 15</p>
+      <p class="text-xs text-[var(--text-mid)] mt-2 font-display tracking-widest">YOUR ABILITIES HAVE GROWN STRONGER</p>
+    </div>
+  </div>
+
+  <!-- ================= SETTINGS MODAL ================= -->
+  <div id="settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
+    <div class="panel w-full max-w-lg max-h-[85vh] overflow-y-auto p-6">
+      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+          class="br"></span></div>
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="panel-title text-lg">System Configuration</h2>
+        <button id="close-settings" class="text-[var(--text-mid)] hover:text-[var(--cyan)]"><i data-lucide="x"
+            class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Hunter
+            Name</label>
+          <input id="input-username" type="text" class="input-system w-full px-3 py-2 text-sm"
+            placeholder="Enter your name">
+        </div>
+
+        <div>
+          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Weather
+            Location (lat, lon)</label>
+          <div class="flex gap-2">
+            <input id="input-lat" type="text" class="input-system w-full px-3 py-2 text-sm"
+              placeholder="Latitude e.g. 38.7223">
+            <input id="input-lon" type="text" class="input-system w-full px-3 py-2 text-sm"
+              placeholder="Longitude e.g. -9.1393">
+          </div>
+          <button id="btn-geo" class="btn-system px-3 py-1.5 mt-2 text-[0.65rem]">Use My Location</button>
+        </div>
+
+        <div>
+          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Custom Webmail
+            URL (optional)</label>
+          <input id="input-custom-mail" type="text" class="input-system w-full px-3 py-2 text-sm"
+            placeholder="https://mail.example.com">
+        </div>
+
+        <div>
+          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Search
+            Engine</label>
+          <select id="input-search-engine" class="input-system w-full px-3 py-2 text-sm">
+            <option value="google">Google</option>
+            <option value="duckduckgo">DuckDuckGo</option>
+            <option value="searxng">SearXNG (self-hosted)</option>
+          </select>
+          <input id="input-searx-url" type="text" class="input-system w-full px-3 py-2 text-sm mt-2 hidden"
+            placeholder="https://searx.example.com/search?q=">
+        </div>
+
+        <div class="pt-2">
+          <button id="btn-reset-data"
+            class="text-xs text-[var(--danger)] font-display tracking-widest uppercase hover:underline">Reset All System
+            Data</button>
+        </div>
+
+        <button id="save-settings" class="btn-system w-full py-2.5 mt-2">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADD PORTAL MODAL ================= -->
+  <div id="portal-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
+    <div class="panel w-full max-w-sm p-6">
+      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+          class="br"></span></div>
+      <h2 class="panel-title text-lg mb-4">New Portal</h2>
+      <div class="space-y-3">
+        <input id="portal-name" type="text" class="input-system w-full px-3 py-2 text-sm"
+          placeholder="Portal name (e.g. GitHub)">
+        <input id="portal-url" type="text" class="input-system w-full px-3 py-2 text-sm" placeholder="https://...">
+        <select id="portal-category" class="input-system w-full px-3 py-2 text-sm">
+          <option value="raids">Daily Raids</option>
+          <option value="vault">System Vault</option>
+          <option value="guild">Guild Links</option>
+        </select>
+        <label class="flex items-center gap-2 text-xs text-[var(--text-mid)] font-display tracking-wide">
+          <input id="portal-srank" type="checkbox" class="accent-purple-500"> Mark as S-Rank
+        </label>
+        <div class="flex gap-2 pt-1">
+          <button id="portal-cancel"
+            class="btn-system flex-1 py-2 !text-[var(--text-mid)] !border-[var(--text-dim)]">Cancel</button>
+          <button id="portal-save" class="btn-system flex-1 py-2">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN LAYOUT ================= -->
+  <div class="relative z-10 max-w-[1500px] mx-auto px-4 md:px-8 py-6 min-h-screen flex flex-col gap-5">
+
+    <!-- ===== TOP STATUS HUD ===== -->
+    <header class="panel px-5 py-4 fade-up">
+      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+          class="br"></span></div>
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+        <!-- Player identity + level -->
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-full border-2 border-[var(--cyan)] flex items-center justify-center shrink-0"
+            style="box-shadow:0 0 18px rgba(0,240,255,0.4);">
+            <i data-lucide="user" class="w-6 h-6 text-[var(--cyan)]"></i>
+          </div>
+          <div>
+            <p id="greeting-text" class="font-display text-lg md:text-xl font-bold text-white tracking-wide">WELCOME,
+              HUNTER</p>
+            <p class="text-xs text-[var(--text-mid)] font-display tracking-widest uppercase">
+              LEVEL <span id="player-level" class="text-[var(--cyan)]">1</span> — <span id="player-rank">E-RANK
+                HUNTER</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- XP bar -->
+        <div class="flex-1 max-w-md w-full">
+          <div
+            class="flex justify-between text-[0.65rem] font-display tracking-widest text-[var(--text-mid)] mb-1 uppercase">
+            <span>Experience</span>
+            <span><span id="xp-current">0</span> / <span id="xp-needed">100</span> XP</span>
+          </div>
+          <div class="xp-track">
+            <div id="xp-fill" class="xp-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Clock + weather -->
+        <div class="flex items-center gap-5">
+          <div class="text-right">
+            <p id="clock-time" class="clock-digits text-2xl text-[var(--cyan)]">00:00:00</p>
+            <p id="clock-date" class="text-[0.65rem] text-[var(--text-mid)] font-display tracking-widest uppercase">--
+              --- ----</p>
+          </div>
+          <div class="w-px h-10 bg-[rgba(0,240,255,0.2)]"></div>
+          <div id="weather-widget" class="flex items-center gap-2 min-w-[90px]">
+            <i data-lucide="loader" class="w-5 h-5 text-[var(--text-mid)] animate-spin"></i>
+            <span class="text-xs text-[var(--text-mid)] font-display">LOADING</span>
+          </div>
+          <button id="open-settings" class="text-[var(--text-mid)] hover:text-[var(--cyan)] transition-colors">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== SEARCH BAR ===== -->
+    <div class="fade-up" style="animation-delay:0.05s">
+      <form id="search-form" class="relative">
+        <i data-lucide="scan-search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[var(--cyan)]"></i>
+        <input id="search-input" type="text" autocomplete="off"
+          class="input-system w-full pl-12 pr-32 py-3.5 text-sm panel" placeholder="SYSTEM SEARCH // press / to focus">
+        <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+            class="br"></span></div>
+        <span
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-[0.65rem] font-display tracking-widest text-[var(--text-dim)] border border-[var(--text-dim)] px-1.5 py-0.5 rounded">/</span>
+      </form>
+    </div>
+
+    <!-- ===== MAIN GRID ===== -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 flex-1">
+
+      <!-- ---------- LEFT: DAILY QUEST PANEL ---------- -->
+      <section class="xl:col-span-3 panel p-5 flex flex-col fade-up" style="animation-delay:0.1s">
+        <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+            class="br"></span></div>
+        <div class="flex items-center justify-between mb-1">
+          <h2 class="panel-title text-sm">Daily Quest</h2>
+          <i data-lucide="scroll-text" class="w-4 h-4 text-[var(--cyan)]"></i>
+        </div>
+        <p class="text-[0.65rem] text-[var(--text-dim)] font-display tracking-widest uppercase mb-3">Daily Routine —
+          Complete to gain XP</p>
+        <div class="divider-glow mb-3"></div>
+
+        <form id="quest-form" class="flex gap-2 mb-3">
+          <input id="quest-input" type="text" class="input-system flex-1 px-3 py-2 text-sm" placeholder="Add a task...">
+          <button type="submit" class="btn-system px-3"><i data-lucide="plus" class="w-4 h-4"></i></button>
+        </form>
+
+        <div id="quest-list" class="flex-1 overflow-y-auto space-y-1.5 max-h-[340px] pr-1"></div>
+
+        <div class="divider-glow my-3"></div>
+        <p class="text-[0.65rem] text-[var(--text-dim)] font-display tracking-widest uppercase text-center">
+          <span id="quest-progress-text">0 / 0 TASKS COMPLETE</span>
+        </p>
+      </section>
+
+      <!-- ---------- CENTER: PORTALS ---------- -->
+      <section class="xl:col-span-6 flex flex-col gap-5">
+
+        <div class="panel p-5 fade-up" style="animation-delay:0.15s">
+          <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+              class="br"></span></div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <i data-lucide="door-open" class="w-4 h-4 text-[var(--cyan)]"></i>
+              <h2 class="panel-title text-sm">Dimensional Portals</h2>
+            </div>
+            <button id="add-portal-btn" class="btn-system px-3 py-1.5 flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> New Portal
+            </button>
+          </div>
+
+          <!-- Daily Raids -->
+          <div class="mb-5">
+            <p
+              class="text-[0.68rem] font-display tracking-[0.2em] text-[var(--blue)] uppercase mb-2 flex items-center gap-1.5">
+              <i data-lucide="swords" class="w-3.5 h-3.5"></i> Daily Raids
+            </p>
+            <div id="portals-raids" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+          </div>
+
+          <!-- System Vault -->
+          <div class="mb-5">
+            <p
+              class="text-[0.68rem] font-display tracking-[0.2em] text-[var(--cyan)] uppercase mb-2 flex items-center gap-1.5">
+              <i data-lucide="vault" class="w-3.5 h-3.5"></i> System Vault
+            </p>
+            <div id="portals-vault" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+          </div>
+
+          <!-- Guild Links -->
+          <div>
+            <p
+              class="text-[0.68rem] font-display tracking-[0.2em] text-purple-400 uppercase mb-2 flex items-center gap-1.5">
+              <i data-lucide="shield" class="w-3.5 h-3.5"></i> Guild Links
+            </p>
+            <div id="portals-guild" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ---------- RIGHT: MAIL PANEL ---------- -->
+      <section class="xl:col-span-3 panel p-5 flex flex-col fade-up" style="animation-delay:0.2s">
+        <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
+            class="br"></span></div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="mail" class="w-4 h-4 text-[var(--cyan)]"></i>
+            <h2 class="panel-title text-sm">System Messages</h2>
+          </div>
+          <button id="mail-popout" title="Open in new tab" class="text-[var(--text-mid)] hover:text-[var(--cyan)]">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div class="flex flex-wrap gap-1.5 mb-3">
+          <button data-mail="gmail" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Gmail</button>
+          <button data-mail="outlook" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Outlook</button>
+          <button data-mail="proton" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Proton</button>
+          <button data-mail="custom" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Custom</button>
+        </div>
+
+        <div class="relative flex-1 min-h-[300px] border border-[rgba(0,240,255,0.15)] overflow-hidden bg-black/30">
+          <iframe id="mail-frame" src="about:blank" class="w-full h-full min-h-[300px]" title="Webmail"></iframe>
+          <div id="mail-blocked-overlay"
+            class="hidden absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[rgba(5,7,10,0.9)] text-center p-4">
+            <i data-lucide="shield-alert" class="w-8 h-8 text-[var(--danger)]"></i>
+            <p class="text-xs text-[var(--text-mid)] font-display tracking-wide leading-relaxed">This provider blocks
+              embedding.<br>Launch it directly instead.</p>
+            <button id="mail-blocked-launch" class="btn-system px-4 py-1.5">Launch Mail <i data-lucide="external-link"
+                class="w-3 h-3 inline ml-1"></i></button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="text-center text-[0.62rem] text-[var(--text-dim)] font-display tracking-[0.25em] uppercase py-2">
+      System Interface v1.0 — Arise
+    </footer>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    /* =====================================================================
+       STATE MANAGEMENT
+       ===================================================================== */
+    const STORAGE_KEY = 'system_hud_state_v1';
+
+    const DEFAULT_STATE = {
+      username: 'HUNTER',
+      xp: 0,
+      level: 1,
+      location: { lat: 38.7223, lon: -9.1393, label: 'Lisbon' },
+      customMailUrl: '',
+      searchEngine: 'google',
+      searxUrl: '',
+      activeMailTab: 'gmail',
+      quests: [
+        { id: cryptoId(), text: 'Complete 100 push-ups', done: false },
+        { id: cryptoId(), text: 'Read for 30 minutes', done: false },
+        { id: cryptoId(), text: 'Review daily goals', done: false },
+      ],
+      portals: {
+        raids: [
+          { id: cryptoId(), name: 'GitHub', url: 'https://github.com', srank: false },
+          { id: cryptoId(), name: 'Claude', url: 'https://claude.ai', srank: true },
+          { id: cryptoId(), name: 'ChatGPT', url: 'https://chat.openai.com', srank: false },
+        ],
+        vault: [
+          { id: cryptoId(), name: 'YouTube', url: 'https://youtube.com', srank: false },
+          { id: cryptoId(), name: 'Crunchyroll', url: 'https://crunchyroll.com', srank: false },
+          { id: cryptoId(), name: 'Steam', url: 'https://store.steampowered.com', srank: false },
+        ],
+        guild: [
+          { id: cryptoId(), name: 'Discord', url: 'https://discord.com/app', srank: false },
+        ],
+      },
+    };
+
+    function cryptoId() {
+      return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return structuredClone(DEFAULT_STATE);
+        const parsed = JSON.parse(raw);
+        // merge with defaults to survive schema additions
+        return {
+          ...structuredClone(DEFAULT_STATE), ...parsed,
+          location: { ...DEFAULT_STATE.location, ...(parsed.location || {}) },
+          portals: { ...structuredClone(DEFAULT_STATE.portals), ...(parsed.portals || {}) }
+        };
+      } catch (e) {
+        console.error('Failed to load system state, reverting to defaults.', e);
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+
+    let state = loadState();
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('Failed to persist system state.', e);
+      }
+    }
+
+    /* =====================================================================
+       LEVEL / XP SYSTEM
+       ===================================================================== */
+    const RANKS = [
+      { min: 1, max: 4, name: 'E-Rank Hunter' },
+      { min: 5, max: 9, name: 'D-Rank Hunter' },
+      { min: 10, max: 14, name: 'C-Rank Hunter' },
+      { min: 15, max: 19, name: 'B-Rank Hunter' },
+      { min: 20, max: 29, name: 'A-Rank Hunter' },
+      { min: 30, max: 9999, name: 'S-Rank Hunter' },
+    ];
+
+    function xpNeededForLevel(level) {
+      // scaling curve, grows each level
+      return Math.round(100 * Math.pow(1.15, level - 1));
+    }
+
+    function rankForLevel(level) {
+      return RANKS.find(r => level >= r.min && level <= r.max)?.name || 'E-Rank Hunter';
+    }
+
+    function addXP(amount) {
+      state.xp += amount;
+      let needed = xpNeededForLevel(state.level);
+      let leveledUp = false;
+      while (state.xp >= needed) {
+        state.xp -= needed;
+        state.level += 1;
+        leveledUp = true;
+        needed = xpNeededForLevel(state.level);
+      }
+      saveState();
+      renderPlayerStatus();
+      if (leveledUp) showLevelUp();
+    }
+
+    function removeXP(amount) {
+      // reverse XP if a task is unchecked (no level-down, just floor at 0 of current level)
+      state.xp = Math.max(0, state.xp - amount);
+      saveState();
+      renderPlayerStatus();
+    }
+
+    function showLevelUp() {
+      const toast = document.getElementById('level-up-toast');
+      document.getElementById('level-up-text').textContent = `LEVEL ${state.level}`;
+      toast.classList.add('show');
+      playLevelUpChime();
+      setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function playLevelUpChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.value = 0.0001;
+          osc.connect(gain).connect(ctx.destination);
+          const start = ctx.currentTime + i * 0.09;
+          gain.gain.exponentialRampToValueAtTime(0.12, start + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.35);
+          osc.start(start);
+          osc.stop(start + 0.4);
+        });
+      } catch (e) { /* audio not available, fail silently */ }
+    }
+
+    function renderPlayerStatus() {
+      document.getElementById('player-level').textContent = state.level;
+      document.getElementById('player-rank').textContent = rankForLevel(state.level);
+      const needed = xpNeededForLevel(state.level);
+      document.getElementById('xp-current').textContent = state.xp;
+      document.getElementById('xp-needed').textContent = needed;
+      document.getElementById('xp-fill').style.width = `${Math.min(100, (state.xp / needed) * 100)}%`;
+      document.getElementById('greeting-text').textContent = `WELCOME, HUNTER ${state.username.toUpperCase()}`;
+    }
+
+    /* =====================================================================
+       DAILY QUEST CHECKLIST
+       ===================================================================== */
+    const XP_PER_TASK = 15;
+
+    function renderQuests() {
+      const list = document.getElementById('quest-list');
+      list.innerHTML = '';
+
+      if (state.quests.length === 0) {
+        list.innerHTML = `<p class="text-xs text-[var(--text-dim)] font-display tracking-wide text-center py-6">No active quests. Add a task to begin.</p>`;
+      }
+
+      state.quests.forEach(q => {
+        const row = document.createElement('div');
+        row.className = `quest-item flex items-center gap-3 px-2 py-2 rounded ${q.done ? 'done' : ''}`;
+        row.innerHTML = `
+      <div class="checkbox-diamond ${q.done ? 'checked' : ''}" data-id="${q.id}" role="checkbox" aria-checked="${q.done}" tabindex="0">
+        <div class="inner-dot"></div>
+      </div>
+      <span class="quest-label flex-1 text-sm text-[var(--text-hi)]">${escapeHtml(q.text)}</span>
+      <button class="quest-delete text-[var(--text-dim)] hover:text-[var(--danger)] transition-colors" data-id="${q.id}" aria-label="Delete task">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+      </button>
+    `;
+        list.appendChild(row);
+      });
+
+      lucide.createIcons();
+      updateQuestProgress();
+    }
+
+    function updateQuestProgress() {
+      const total = state.quests.length;
+      const done = state.quests.filter(q => q.done).length;
+      document.getElementById('quest-progress-text').textContent = `${done} / ${total} TASKS COMPLETE`;
+    }
+
+    function toggleQuest(id) {
+      const q = state.quests.find(t => t.id === id);
+      if (!q) return;
+      q.done = !q.done;
+      saveState();
+      renderQuests();
+      if (q.done) addXP(XP_PER_TASK); else removeXP(XP_PER_TASK);
+    }
+
+    function deleteQuest(id) {
+      state.quests = state.quests.filter(t => t.id !== id);
+      saveState();
+      renderQuests();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    document.getElementById('quest-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('quest-input');
+      const text = input.value.trim();
+      if (!text) return;
+      state.quests.push({ id: cryptoId(), text, done: false });
+      saveState();
+      renderQuests();
+      input.value = '';
+      input.focus();
+    });
+
+    document.getElementById('quest-list').addEventListener('click', (e) => {
+      const box = e.target.closest('.checkbox-diamond');
+      const del = e.target.closest('.quest-delete');
+      if (box) toggleQuest(box.dataset.id);
+      if (del) deleteQuest(del.dataset.id);
+    });
+    document.getElementById('quest-list').addEventListener('keydown', (e) => {
+      const box = e.target.closest('.checkbox-diamond');
+      if (box && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        toggleQuest(box.dataset.id);
+      }
+    });
+
+    /* =====================================================================
+       CLOCK
+       ===================================================================== */
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours();
+      const hh = h % 12 === 0 ? 12 : h % 12;
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      document.getElementById('clock-time').textContent = `${String(hh).padStart(2, '0')}:${mm}:${ss} ${ampm}`;
+
+      const dateStr = now.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+      document.getElementById('clock-date').textContent = dateStr;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /* =====================================================================
+       WEATHER (Open-Meteo, no API key required)
+       ===================================================================== */
+    const WMO_MAP = {
+      0: { label: 'Clear', icon: 'sun' },
+      1: { label: 'Mostly Clear', icon: 'sun' },
+      2: { label: 'Partly Cloudy', icon: 'cloud-sun' },
+      3: { label: 'Overcast', icon: 'cloud' },
+      45: { label: 'Fog', icon: 'cloud-fog' },
+      48: { label: 'Fog', icon: 'cloud-fog' },
+      51: { label: 'Drizzle', icon: 'cloud-drizzle' },
+      53: { label: 'Drizzle', icon: 'cloud-drizzle' },
+      55: { label: 'Drizzle', icon: 'cloud-drizzle' },
+      61: { label: 'Rain', icon: 'cloud-rain' },
+      63: { label: 'Rain', icon: 'cloud-rain' },
+      65: { label: 'Heavy Rain', icon: 'cloud-rain-wind' },
+      71: { label: 'Snow', icon: 'cloud-snow' },
+      73: { label: 'Snow', icon: 'cloud-snow' },
+      75: { label: 'Heavy Snow', icon: 'cloud-snow' },
+      80: { label: 'Showers', icon: 'cloud-rain' },
+      81: { label: 'Showers', icon: 'cloud-rain' },
+      82: { label: 'Violent Showers', icon: 'cloud-rain-wind' },
+      95: { label: 'Thunderstorm', icon: 'cloud-lightning' },
+      96: { label: 'Thunderstorm', icon: 'cloud-lightning' },
+      99: { label: 'Thunderstorm', icon: 'cloud-lightning' },
+    };
+
+    async function fetchWeather() {
+      const widget = document.getElementById('weather-widget');
+      try {
+        const { lat, lon } = state.location;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=celsius`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Weather fetch failed');
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weather_code;
+        const info = WMO_MAP[code] || { label: 'Unknown', icon: 'cloud' };
+        widget.innerHTML = `
+      <i data-lucide="${info.icon}" class="w-5 h-5 text-[var(--cyan)]"></i>
+      <span class="text-sm font-display font-semibold text-white">${temp}°C</span>
+      <span class="text-[0.62rem] text-[var(--text-mid)] font-display tracking-wide uppercase hidden md:inline">${info.label}</span>
+    `;
+        lucide.createIcons();
+      } catch (e) {
+        widget.innerHTML = `
+      <i data-lucide="cloud-off" class="w-5 h-5 text-[var(--text-dim)]"></i>
+      <span class="text-[0.65rem] text-[var(--text-dim)] font-display">N/A</span>
+    `;
+        lucide.createIcons();
+      }
+    }
+    fetchWeather();
+    setInterval(fetchWeather, 15 * 60 * 1000); // refresh every 15 min
+
+    /* =====================================================================
+       SEARCH BAR
+       ===================================================================== */
+    const SEARCH_ENGINES = {
+      google: 'https://www.google.com/search?q=',
+      duckduckgo: 'https://duckduckgo.com/?q=',
+    };
+
+    document.getElementById('search-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = document.getElementById('search-input').value.trim();
+      if (!q) return;
+      let base;
+      if (state.searchEngine === 'searxng' && state.searxUrl) {
+        base = state.searxUrl;
+      } else {
+        base = SEARCH_ENGINES[state.searchEngine] || SEARCH_ENGINES.google;
+      }
+      window.location.href = base + encodeURIComponent(q);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        document.getElementById('search-input').focus();
+      }
+      if (e.key === 'Escape') {
+        document.getElementById('search-input').blur();
+        closeModal('settings-modal');
+        closeModal('portal-modal');
+      }
+    });
+    // autofocus search on load
+    window.addEventListener('load', () => document.getElementById('search-input').focus());
+
+    /* =====================================================================
+       PORTALS (bookmarks)
+       ===================================================================== */
+    function faviconFor(url) {
+      try {
+        const u = new URL(url);
+        return `https://www.google.com/s2/favicons?sz=64&domain=${u.hostname}`;
+      } catch {
+        return '';
+      }
+    }
+
+    function renderPortals() {
+      ['raids', 'vault', 'guild'].forEach(cat => {
+        const container = document.getElementById(`portals-${cat}`);
+        container.innerHTML = '';
+        const items = state.portals[cat] || [];
+        if (items.length === 0) {
+          container.innerHTML = `<p class="text-[0.65rem] text-[var(--text-dim)] font-display col-span-full">No portals yet.</p>`;
+          return;
+        }
+        items.forEach(p => {
+          const card = document.createElement('a');
+          card.href = p.url;
+          card.target = '_self';
+          card.className = `portal-card group flex flex-col items-center justify-center gap-1.5 p-3 rounded ${p.srank ? 'rank-s' : ''}`;
+          card.innerHTML = `
+        <button class="delete-x absolute top-1 right-1 text-[var(--text-dim)] hover:text-[var(--danger)] z-10" data-id="${p.id}" data-cat="${cat}" aria-label="Remove portal">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+        ${p.srank ? `<span class="absolute top-1 left-1.5 badge-rank text-purple-400">S</span>` : ''}
+        <img src="${faviconFor(p.url)}" class="w-6 h-6 rounded-sm" onerror="this.style.display='none'" alt="">
+        <span class="text-[0.7rem] font-display tracking-wide text-[var(--text-hi)] text-center truncate w-full">${escapeHtml(p.name)}</span>
+      `;
+          container.appendChild(card);
+        });
+      });
+      lucide.createIcons();
+    }
+
+    document.querySelectorAll('[id^="portals-"]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const del = e.target.closest('.delete-x');
+        if (del) {
+          e.preventDefault();
+          e.stopPropagation();
+          const { id, cat } = del.dataset;
+          state.portals[cat] = state.portals[cat].filter(p => p.id !== id);
+          saveState();
+          renderPortals();
+        }
+      });
+    });
+
+    // Add portal modal
+    function openModal(id) {
+      const m = document.getElementById(id);
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    document.getElementById('add-portal-btn').addEventListener('click', () => openModal('portal-modal'));
+    document.getElementById('portal-cancel').addEventListener('click', () => closeModal('portal-modal'));
+    document.getElementById('portal-save').addEventListener('click', () => {
+      const name = document.getElementById('portal-name').value.trim();
+      let url = document.getElementById('portal-url').value.trim();
+      const cat = document.getElementById('portal-category').value;
+      const srank = document.getElementById('portal-srank').checked;
+      if (!name || !url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      state.portals[cat].push({ id: cryptoId(), name, url, srank });
+      saveState();
+      renderPortals();
+      document.getElementById('portal-name').value = '';
+      document.getElementById('portal-url').value = '';
+      document.getElementById('portal-srank').checked = false;
+      closeModal('portal-modal');
+    });
+
+    /* =====================================================================
+       MAIL PANEL
+       ===================================================================== */
+    const MAIL_PROVIDERS = {
+      gmail: 'https://mail.google.com/mail/u/0/#inbox',
+      outlook: 'https://outlook.live.com/mail/0/inbox',
+      proton: 'https://mail.proton.me/u/0/inbox',
+      custom: '', // filled from state.customMailUrl
+    };
+
+    // Providers known to reliably block iframe embedding via X-Frame-Options / CSP.
+    // We can't read the response headers of a cross-origin iframe (browser security),
+    // so we proactively show the "launch externally" fallback for providers known to block,
+    // and let the iframe attempt to load for anything else (custom URLs).
+    const KNOWN_BLOCKED = new Set(['gmail', 'outlook', 'proton']);
+
+    function loadMail(tab) {
+      state.activeMailTab = tab;
+      saveState();
+
+      document.querySelectorAll('.mail-tab').forEach(btn => {
+        btn.classList.toggle('active-tab', btn.dataset.mail === tab);
+      });
+
+      const frame = document.getElementById('mail-frame');
+      const overlay = document.getElementById('mail-blocked-overlay');
+      const url = tab === 'custom' ? state.customMailUrl : MAIL_PROVIDERS[tab];
+
+      if (!url) {
+        overlay.classList.remove('hidden');
+        frame.src = 'about:blank';
+        overlay.querySelector('p').innerHTML = 'No custom webmail URL set.<br>Add one in System Configuration.';
+        return;
+      }
+
+      if (KNOWN_BLOCKED.has(tab)) {
+        // These providers set X-Frame-Options: DENY / frame-ancestors 'none' — show fallback immediately.
+        overlay.classList.remove('hidden');
+        overlay.querySelector('p').innerHTML = 'This provider blocks embedding.<br>Launch it directly instead.';
+        frame.src = 'about:blank';
+      } else {
+        overlay.classList.add('hidden');
+        frame.src = url;
+      }
+    }
+
+    document.querySelectorAll('.mail-tab').forEach(btn => {
+      btn.addEventListener('click', () => loadMail(btn.dataset.mail));
+    });
+
+    document.getElementById('mail-blocked-launch').addEventListener('click', () => {
+      const url = state.activeMailTab === 'custom' ? state.customMailUrl : MAIL_PROVIDERS[state.activeMailTab];
+      if (url) window.open(url, '_blank', 'noopener');
+    });
+
+    document.getElementById('mail-popout').addEventListener('click', () => {
+      const url = state.activeMailTab === 'custom' ? state.customMailUrl : MAIL_PROVIDERS[state.activeMailTab];
+      if (url) window.open(url, '_blank', 'noopener');
+    });
+
+    /* =====================================================================
+       SETTINGS MODAL
+       ===================================================================== */
+    document.getElementById('open-settings').addEventListener('click', () => {
+      document.getElementById('input-username').value = state.username;
+      document.getElementById('input-lat').value = state.location.lat;
+      document.getElementById('input-lon').value = state.location.lon;
+      document.getElementById('input-custom-mail').value = state.customMailUrl;
+      document.getElementById('input-search-engine').value = state.searchEngine;
+      document.getElementById('input-searx-url').value = state.searxUrl;
+      document.getElementById('input-searx-url').classList.toggle('hidden', state.searchEngine !== 'searxng');
+      openModal('settings-modal');
+    });
+    document.getElementById('close-settings').addEventListener('click', () => closeModal('settings-modal'));
+
+    document.getElementById('input-search-engine').addEventListener('change', (e) => {
+      document.getElementById('input-searx-url').classList.toggle('hidden', e.target.value !== 'searxng');
+    });
+
+    document.getElementById('btn-geo').addEventListener('click', () => {
+      if (!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById('input-lat').value = pos.coords.latitude.toFixed(4);
+          document.getElementById('input-lon').value = pos.coords.longitude.toFixed(4);
+        },
+        () => alert('Location access denied. Enter coordinates manually.')
+      );
+    });
+
+    document.getElementById('save-settings').addEventListener('click', () => {
+      state.username = document.getElementById('input-username').value.trim() || 'HUNTER';
+      const lat = parseFloat(document.getElementById('input-lat').value);
+      const lon = parseFloat(document.getElementById('input-lon').value);
+      if (!isNaN(lat) && !isNaN(lon)) state.location = { lat, lon, label: '' };
+      state.customMailUrl = document.getElementById('input-custom-mail').value.trim();
+      state.searchEngine = document.getElementById('input-search-engine').value;
+      state.searxUrl = document.getElementById('input-searx-url').value.trim();
+      MAIL_PROVIDERS.custom = state.customMailUrl;
+      saveState();
+      renderPlayerStatus();
+      fetchWeather();
+      if (state.activeMailTab === 'custom') loadMail('custom');
+      closeModal('settings-modal');
+    });
+
+    document.getElementById('btn-reset-data').addEventListener('click', () => {
+      if (confirm('This will erase all quests, XP, and portals permanently. Continue?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        state = structuredClone(DEFAULT_STATE);
+        saveState();
+        renderAll();
+        closeModal('settings-modal');
+      }
+    });
+
+    // close modals on backdrop click
+    [['settings-modal'], ['portal-modal']].forEach(([id]) => {
+      document.getElementById(id).addEventListener('click', (e) => {
+        if (e.target.id === id) closeModal(id);
+      });
+    });
+
+    /* =====================================================================
+       AMBIENT PARTICLES
+       ===================================================================== */
+    function spawnParticles() {
+      const container = document.getElementById('particles');
+      const count = 30;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = `${Math.random() * 100}vw`;
+        p.style.animationDuration = `${10 + Math.random() * 12}s`;
+        p.style.animationDelay = `${Math.random() * 14}s`;
+        container.appendChild(p);
+      }
+    }
+    spawnParticles();
+
+    /* =====================================================================
+       INIT
+       ===================================================================== */
+    function renderAll() {
+      MAIL_PROVIDERS.custom = state.customMailUrl;
+      renderPlayerStatus();
+      renderQuests();
+      renderPortals();
+      loadMail(state.activeMailTab || 'gmail');
+      lucide.createIcons();
+    }
+    renderAll();
+  </script>
+
+</body>
+
+</html>
