@@ -4,894 +4,441 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYSTEM // Hunter Interface</title>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <!-- Fonts: Rajdhani (display / system feel) + Inter (body) -->
+  <meta name="color-scheme" content="dark">
+  <title>Avalon</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M1 28 9 6l8 22z' fill='%23e6bd4e'/%3E%3Cpath d='M10 6h12l-6 22z' fill='%23f7dc84'/%3E%3Cpath d='M15 28 23 6l8 22z' fill='%23b2892c'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=Orbitron:wght@600;800&display=swap"
-    rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- only the five katakana glyphs of the brand name -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&text=%E3%82%A2%E3%83%B4%E3%82%A1%E3%83%AD%E3%83%B3&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-
 </head>
 
-<body class="min-h-screen">
+<body>
+  <!-- ============ ICON SPRITE ============ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f7dc84" /><stop offset=".55" stop-color="#e6bd4e" /><stop offset="1" stop-color="#b2892c" />
+      </linearGradient>
+      <linearGradient id="g-chrome" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffffff" /><stop offset=".45" stop-color="#d9deea" /><stop offset=".55" stop-color="#b7bfd2" /><stop offset="1" stop-color="#eef1f8" />
+      </linearGradient>
+      <filter id="f-glow" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="2.4" /></filter>
+      <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 0c.6 6.2 5.8 11.4 12 12-6.2.6-11.4 5.8-12 12-.6-6.2-5.8-11.4-12-12C6.2 11.4 11.4 6.2 12 0Z" fill="currentColor" stroke="none" /></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4" /></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14" /></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 3 20 12 6 21Z" /></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h3v16H7zM14 4h3v16h-3z" /></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></symbol>
+      <symbol id="i-skip" viewBox="0 0 24 24"><path d="M5 4l10 8-10 8ZM19 5v14" /></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" /><path d="M21 3v5h-5" /></symbol>
+      <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></symbol>
+      <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" /></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" /></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
+      <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8" /></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></symbol>
+      <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4M9 18c-4.51 2-5-2-7-2" /></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></symbol>
+      <symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" /></symbol>
+      <symbol id="i-rain" viewBox="0 0 24 24"><path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24M16 14v6M8 14v6M12 16v6" /></symbol>
+      <symbol id="i-snow" viewBox="0 0 24 24"><path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24M8 15h.01M8 19h.01M12 17h.01M12 21h.01M16 15h.01M16 19h.01" /></symbol>
+      <symbol id="i-storm" viewBox="0 0 24 24"><path d="M6 16.33A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.97M13 11l-3 5h4l-3 5" /></symbol>
+      <symbol id="i-fog" viewBox="0 0 24 24"><path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24M16 17H7M17 21H9" /></symbol>
+      <symbol id="i-offline" viewBox="0 0 24 24"><path d="m2 2 20 20M5.78 5.78A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.31-.2M21.53 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7 7 0 0 0 10 5.07" /></symbol>
+    </defs>
+  </svg>
 
-  <div class="bg-grid"></div>
-  <div class="bg-vignette"></div>
-  <div class="bg-scanline"></div>
-  <div id="particles"></div>
+  <div class="sky" aria-hidden="true"><div id="sparkles"></div></div>
 
-  <!-- ================= LEVEL UP TOAST ================= -->
-  <div id="level-up-toast">
-    <div class="panel panel-purple px-10 py-6 text-center pulse-glow" style="box-shadow:0 0 50px rgba(168,85,247,0.5);">
-      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-          class="br"></span></div>
-      <p class="font-system text-sm text-purple-300 tracking-[0.3em] mb-2">LEVEL UP</p>
-      <p id="level-up-text" class="font-display text-4xl font-bold text-white">LEVEL 15</p>
-      <p class="text-xs text-[var(--text-mid)] mt-2 font-display tracking-widest">YOUR ABILITIES HAVE GROWN STRONGER</p>
+  <!-- ============ SYSTEM BAR ============ -->
+  <header class="osbar">
+    <div class="os-left">
+      <svg class="os-mark" viewBox="0 0 250 108" aria-hidden="true">
+        <g fill="url(#g-gold)"><path d="M0 108 58 0l58 108z" /><path d="M66 0h118l-59 108z" /><path d="M134 108 192 0l58 108z" /></g>
+        <g fill="#62e6f0"><circle cx="58" cy="72" r="7" /><circle cx="125" cy="36" r="7" /><circle cx="192" cy="72" r="7" /></g>
+      </svg>
+      <span class="os-name">Avalon</span><span class="os-ver">OS</span>
     </div>
-  </div>
+    <div class="os-tray">
+      <button class="tray" id="tray-net" title="Home network (Sentinel)"><span class="led"></span><span id="tray-net-txt">Home</span></button>
+      <button class="tray" id="tray-gh" title="GitHub notifications" hidden><svg class="ic"><use href="#i-github" /></svg><span id="tray-gh-n">0</span></button>
+      <button class="tray" id="tray-focus" title="Focus timer — click to pause" hidden><svg class="ic"><use href="#i-clock" /></svg><span id="tray-focus-t">25:00</span></button>
+      <button id="weather" class="tray weather" title="Weather — click to refresh"><svg class="ic"><use href="#i-cloud" /></svg><span>—</span></button>
+      <span class="tray-sep" aria-hidden="true"></span>
+      <button class="icon-btn sm" id="btn-idle" title="Lock screen (I)"><svg class="ic"><use href="#i-moon" /></svg></button>
+      <button class="icon-btn sm" id="btn-help" title="Shortcuts (?)"><svg class="ic"><use href="#i-keyboard" /></svg></button>
+      <button class="icon-btn sm" id="btn-settings" title="Settings"><svg class="ic"><use href="#i-sliders" /></svg></button>
+    </div>
+  </header>
 
-  <!-- ================= SETTINGS MODAL ================= -->
-  <div id="settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
-    <div class="panel w-full max-w-lg max-h-[85vh] overflow-y-auto p-6">
-      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-          class="br"></span></div>
-      <div class="flex items-center justify-between mb-5">
-        <h2 class="panel-title text-lg">System Configuration</h2>
-        <button id="close-settings" class="text-[var(--text-mid)] hover:text-[var(--cyan)]"><i data-lucide="x"
-            class="w-5 h-5"></i></button>
+  <main class="shell">
+    <!-- ============ HEADER: brand + clock ============ -->
+    <header class="masthead">
+      <div class="brand">
+        <svg class="wordmark" viewBox="0 0 584 126" role="img" aria-label="Avalon">
+          <g fill="url(#g-gold)">
+            <path d="M0 108 58 0l58 108z" />
+            <path d="M66 0h118l-59 108z" />
+            <path d="M134 108 192 0l58 108z" />
+          </g>
+          <g fill="#b2892c" opacity=".45">
+            <path d="M58 30 22 98h36z" />
+            <path d="M125 72 94 14h31z" />
+            <path d="M192 30 156 98h36z" />
+          </g>
+          <g fill="#62e6f0">
+            <circle cx="58" cy="72" r="9" filter="url(#f-glow)" opacity=".8" /><circle cx="58" cy="72" r="4.5" />
+            <circle cx="125" cy="36" r="9" filter="url(#f-glow)" opacity=".8" /><circle cx="125" cy="36" r="4.5" />
+            <circle cx="192" cy="72" r="9" filter="url(#f-glow)" opacity=".8" /><circle cx="192" cy="72" r="4.5" />
+          </g>
+          <g fill="url(#g-chrome)">
+            <path d="M272 0h24v86h52v22h-76z" />
+            <path fill-rule="evenodd" d="M384 0h56l22 22v64l-22 22h-56l-22-22V22zM392 24h40l6 6v48l-6 6h-40l-6-6V30z" />
+            <path d="M478 0h24l52 70V0h22v108h-24l-52-70v70h-22z" />
+          </g>
+          <path d="M456 117h128l-7 6H449z" fill="url(#g-gold)" />
+        </svg>
+        <p class="kana" lang="ja">アヴァロン</p>
+        <p class="tagline">The isle beyond the mist</p>
       </div>
 
-      <div class="space-y-5">
-        <div>
-          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Hunter
-            Name</label>
-          <input id="input-username" type="text" class="input-system w-full px-3 py-2 text-sm"
-            placeholder="Enter your name">
-        </div>
-
-        <div>
-          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Weather
-            Location (lat, lon)</label>
-          <div class="flex gap-2">
-            <input id="input-lat" type="text" class="input-system w-full px-3 py-2 text-sm"
-              placeholder="Latitude e.g. 38.7223">
-            <input id="input-lon" type="text" class="input-system w-full px-3 py-2 text-sm"
-              placeholder="Longitude e.g. -9.1393">
-          </div>
-          <button id="btn-geo" class="btn-system px-3 py-1.5 mt-2 text-[0.65rem]">Use My Location</button>
-        </div>
-
-        <div>
-          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Custom Webmail
-            URL (optional)</label>
-          <input id="input-custom-mail" type="text" class="input-system w-full px-3 py-2 text-sm"
-            placeholder="https://mail.example.com">
-        </div>
-
-        <div>
-          <label class="text-xs font-display tracking-widest text-[var(--text-mid)] uppercase mb-1 block">Search
-            Engine</label>
-          <select id="input-search-engine" class="input-system w-full px-3 py-2 text-sm">
-            <option value="google">Google</option>
-            <option value="duckduckgo">DuckDuckGo</option>
-            <option value="searxng">SearXNG (self-hosted)</option>
-          </select>
-          <input id="input-searx-url" type="text" class="input-system w-full px-3 py-2 text-sm mt-2 hidden"
-            placeholder="https://searx.example.com/search?q=">
-        </div>
-
-        <div class="pt-2">
-          <button id="btn-reset-data"
-            class="text-xs text-[var(--danger)] font-display tracking-widest uppercase hover:underline">Reset All System
-            Data</button>
-        </div>
-
-        <button id="save-settings" class="btn-system w-full py-2.5 mt-2">Save Configuration</button>
+      <div class="guardian-wrap">
+        <div class="sigil" aria-hidden="true"></div>
+        <canvas id="guardian" width="40" height="30" title="The Avalon guardian. Click him."></canvas>
       </div>
-    </div>
-  </div>
 
-  <!-- ================= ADD PORTAL MODAL ================= -->
-  <div id="portal-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
-    <div class="panel w-full max-w-sm p-6">
-      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-          class="br"></span></div>
-      <h2 class="panel-title text-lg mb-4">New Portal</h2>
-      <div class="space-y-3">
-        <input id="portal-name" type="text" class="input-system w-full px-3 py-2 text-sm"
-          placeholder="Portal name (e.g. GitHub)">
-        <input id="portal-url" type="text" class="input-system w-full px-3 py-2 text-sm" placeholder="https://...">
-        <select id="portal-category" class="input-system w-full px-3 py-2 text-sm">
-          <option value="raids">Daily Raids</option>
-          <option value="vault">System Vault</option>
-          <option value="guild">Guild Links</option>
-        </select>
-        <label class="flex items-center gap-2 text-xs text-[var(--text-mid)] font-display tracking-wide">
-          <input id="portal-srank" type="checkbox" class="accent-purple-500"> Mark as S-Rank
-        </label>
-        <div class="flex gap-2 pt-1">
-          <button id="portal-cancel"
-            class="btn-system flex-1 py-2 !text-[var(--text-mid)] !border-[var(--text-dim)]">Cancel</button>
-          <button id="portal-save" class="btn-system flex-1 py-2">Create</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= MAIN LAYOUT ================= -->
-  <div class="relative z-10 max-w-[1500px] mx-auto px-4 md:px-8 py-6 min-h-screen flex flex-col gap-5">
-
-    <!-- ===== TOP STATUS HUD ===== -->
-    <header class="panel px-5 py-4 fade-up">
-      <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-          class="br"></span></div>
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-        <!-- Player identity + level -->
-        <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-full border-2 border-[var(--cyan)] flex items-center justify-center shrink-0"
-            style="box-shadow:0 0 18px rgba(0,240,255,0.4);">
-            <i data-lucide="user" class="w-6 h-6 text-[var(--cyan)]"></i>
-          </div>
-          <div>
-            <p id="greeting-text" class="font-display text-lg md:text-xl font-bold text-white tracking-wide">WELCOME,
-              HUNTER</p>
-            <p class="text-xs text-[var(--text-mid)] font-display tracking-widest uppercase">
-              LEVEL <span id="player-level" class="text-[var(--cyan)]">1</span> — <span id="player-rank">E-RANK
-                HUNTER</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- XP bar -->
-        <div class="flex-1 max-w-md w-full">
-          <div
-            class="flex justify-between text-[0.65rem] font-display tracking-widest text-[var(--text-mid)] mb-1 uppercase">
-            <span>Experience</span>
-            <span><span id="xp-current">0</span> / <span id="xp-needed">100</span> XP</span>
-          </div>
-          <div class="xp-track">
-            <div id="xp-fill" class="xp-fill" style="width:0%"></div>
-          </div>
-        </div>
-
-        <!-- Clock + weather -->
-        <div class="flex items-center gap-5">
-          <div class="text-right">
-            <p id="clock-time" class="clock-digits text-2xl text-[var(--cyan)]">00:00:00</p>
-            <p id="clock-date" class="text-[0.65rem] text-[var(--text-mid)] font-display tracking-widest uppercase">--
-              --- ----</p>
-          </div>
-          <div class="w-px h-10 bg-[rgba(0,240,255,0.2)]"></div>
-          <div id="weather-widget" class="flex items-center gap-2 min-w-[90px]">
-            <i data-lucide="loader" class="w-5 h-5 text-[var(--text-mid)] animate-spin"></i>
-            <span class="text-xs text-[var(--text-mid)] font-display">LOADING</span>
-          </div>
-          <button id="open-settings" class="text-[var(--text-mid)] hover:text-[var(--cyan)] transition-colors">
-            <i data-lucide="settings" class="w-5 h-5"></i>
-          </button>
-        </div>
+      <div class="timewrap">
+        <button class="timebox" id="timebox" title="Open calendar" aria-haspopup="true" aria-expanded="false">
+          <span class="clock" id="clock">00:00</span>
+          <span class="date" id="date">—</span>
+        </button>
+        <div class="cal-pop" id="cal-pop" hidden></div>
       </div>
     </header>
 
-    <!-- ===== SEARCH BAR ===== -->
-    <div class="fade-up" style="animation-delay:0.05s">
-      <form id="search-form" class="relative">
-        <i data-lucide="scan-search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[var(--cyan)]"></i>
-        <input id="search-input" type="text" autocomplete="off"
-          class="input-system w-full pl-12 pr-32 py-3.5 text-sm panel" placeholder="SYSTEM SEARCH // press / to focus">
-        <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-            class="br"></span></div>
-        <span
-          class="absolute right-4 top-1/2 -translate-y-1/2 text-[0.65rem] font-display tracking-widest text-[var(--text-dim)] border border-[var(--text-dim)] px-1.5 py-0.5 rounded">/</span>
-      </form>
-    </div>
+    <!-- ============ SEARCH ============ -->
+    <form id="cmd" class="cmd" autocomplete="off" role="search">
+      <svg class="ic cmd-ic"><use href="#i-search" /></svg>
+      <input id="cmd-input" type="text" spellcheck="false" aria-label="Search" aria-controls="cmd-list"
+        placeholder="Search, open a link, !bang, = math, > command">
+      <button type="button" class="cmd-engine" id="engine-btn" aria-haspopup="true" aria-expanded="false" title="Choose search engines">
+        <span id="engine-label">Google</span><svg class="ic"><use href="#i-chevron" /></svg>
+      </button>
+      <ul id="cmd-list" class="cmd-list" role="listbox" hidden></ul>
+      <div class="engine-pop" id="engine-pop" hidden>
+        <input type="text" id="engine-filter" placeholder="Filter engines…" spellcheck="false" autocomplete="off" aria-label="Filter engines">
+        <ul class="eng-list" id="engine-rows"></ul>
+        <div class="eng-foot"><span id="engine-sel"></span><button type="button" class="btn btn-sm" id="engine-done">Done</button></div>
+        <p class="eng-hint">Click engines to add or remove them · <b>only</b> uses just that one</p>
+      </div>
+    </form>
+    <div class="multi-bar" id="multi-bar" hidden></div>
 
-    <!-- ===== MAIN GRID ===== -->
-    <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 flex-1">
+    <!-- ============ LAUNCHPAD ============ -->
+    <section class="launchpad" id="launchpad">
+      <div id="groups" class="groups"></div>
+      <div class="lp-actions">
+        <button class="btn btn-sm" id="add-group" hidden><svg class="ic"><use href="#i-plus" /></svg>Group</button>
+        <button class="btn btn-sm" id="toggle-edit" title="Edit links (E)"><svg class="ic"><use href="#i-pencil" /></svg><span>Edit</span></button>
+      </div>
+    </section>
 
-      <!-- ---------- LEFT: DAILY QUEST PANEL ---------- -->
-      <section class="xl:col-span-3 panel p-5 flex flex-col fade-up" style="animation-delay:0.1s">
-        <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-            class="br"></span></div>
-        <div class="flex items-center justify-between mb-1">
-          <h2 class="panel-title text-sm">Daily Quest</h2>
-          <i data-lucide="scroll-text" class="w-4 h-4 text-[var(--cyan)]"></i>
-        </div>
-        <p class="text-[0.65rem] text-[var(--text-dim)] font-display tracking-widest uppercase mb-3">Daily Routine —
-          Complete to gain XP</p>
-        <div class="divider-glow mb-3"></div>
+    <!-- ============ DASHBOARD ============ -->
+    <div class="grid">
+      <!-- ---------- LEFT: today + focus + memo ---------- -->
+      <div class="col col-left">
+        <section class="panel" id="today">
+          <header class="p-head">
+            <h2>Today</h2>
+            <span class="p-meta" id="streak" title="Days in a row with the whole routine done"><svg class="ic"><use href="#i-flame" /></svg><b>0</b></span>
+          </header>
 
-        <form id="quest-form" class="flex gap-2 mb-3">
-          <input id="quest-input" type="text" class="input-system flex-1 px-3 py-2 text-sm" placeholder="Add a task...">
-          <button type="submit" class="btn-system px-3"><i data-lucide="plus" class="w-4 h-4"></i></button>
-        </form>
+          <div class="sub-head"><span>Routine</span><span id="routine-count">0/0</span></div>
+          <div class="segbar" id="routine-bar"></div>
+          <ul class="tlist" id="routine-list"></ul>
+          <form class="tform" id="routine-form">
+            <input type="text" placeholder="Add to routine…" maxlength="120" aria-label="New routine item">
+            <button class="icon-btn" title="Add"><svg class="ic"><use href="#i-plus" /></svg></button>
+          </form>
+          <p class="hint" id="routine-reset">Resets at midnight</p>
 
-        <div id="quest-list" class="flex-1 overflow-y-auto space-y-1.5 max-h-[340px] pr-1"></div>
+          <div class="sub-head mt"><span>Tasks</span><span id="task-count">0 open</span></div>
+          <form class="tform" id="task-form">
+            <input type="text" placeholder="Add a task…" maxlength="160" aria-label="New task">
+            <button class="icon-btn" title="Add"><svg class="ic"><use href="#i-plus" /></svg></button>
+          </form>
+          <ul class="tlist" id="task-list"></ul>
+          <details class="done-box" id="done-box">
+            <summary><svg class="ic"><use href="#i-chevron" /></svg><span id="done-count">Done (0)</span><button type="button" class="link-btn" id="clear-done">Clear</button></summary>
+            <ul class="tlist" id="done-list"></ul>
+          </details>
+        </section>
 
-        <div class="divider-glow my-3"></div>
-        <p class="text-[0.65rem] text-[var(--text-dim)] font-display tracking-widest uppercase text-center">
-          <span id="quest-progress-text">0 / 0 TASKS COMPLETE</span>
-        </p>
-      </section>
+        <section class="panel" id="focus">
+          <header class="p-head">
+            <h2>Focus</h2>
+            <span class="p-meta" id="focus-count">0 today</span>
+          </header>
+          <div class="seg-tabs" role="tablist">
+            <button data-mode="focus" role="tab">Focus</button>
+            <button data-mode="short" role="tab">Break</button>
+            <button data-mode="long" role="tab">Long break</button>
+          </div>
+          <div class="focus-time" id="focus-time">25:00</div>
+          <div class="segbar big" id="focus-bar"></div>
+          <div class="focus-ctrl">
+            <button class="icon-btn" id="focus-reset" title="Reset"><svg class="ic"><use href="#i-reset" /></svg></button>
+            <button class="btn btn-gold" id="focus-toggle"><svg class="ic"><use href="#i-play" /></svg><span>Start</span></button>
+            <button class="icon-btn" id="focus-skip" title="Skip"><svg class="ic"><use href="#i-skip" /></svg></button>
+          </div>
+        </section>
 
-      <!-- ---------- CENTER: PORTALS ---------- -->
-      <section class="xl:col-span-6 flex flex-col gap-5">
+        <section class="panel" id="memo-panel">
+          <header class="p-head"><h2>Memo</h2><span class="p-meta" id="memo-status">saved</span></header>
+          <textarea id="memo" class="memo" placeholder="Scratchpad. Saves automatically."></textarea>
+        </section>
+      </div>
 
-        <div class="panel p-5 fade-up" style="animation-delay:0.15s">
-          <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-              class="br"></span></div>
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2">
-              <i data-lucide="door-open" class="w-4 h-4 text-[var(--cyan)]"></i>
-              <h2 class="panel-title text-sm">Dimensional Portals</h2>
+      <!-- ---------- CENTER: news ---------- -->
+      <div class="col col-main">
+        <section class="panel feed-panel" id="news">
+          <header class="p-head">
+            <h2>Tech Feed</h2>
+            <div class="p-actions">
+              <span class="p-meta" id="news-updated"></span>
+              <button class="icon-btn sm" id="news-refresh" title="Refresh (R)"><svg class="ic"><use href="#i-refresh" /></svg></button>
             </div>
-            <button id="add-portal-btn" class="btn-system px-3 py-1.5 flex items-center gap-1.5">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i> New Portal
-            </button>
-          </div>
+          </header>
+          <div class="tabs" id="news-tabs" role="tablist"></div>
+          <ol class="news" id="news-list"></ol>
+        </section>
+      </div>
 
-          <!-- Daily Raids -->
-          <div class="mb-5">
-            <p
-              class="text-[0.68rem] font-display tracking-[0.2em] text-[var(--blue)] uppercase mb-2 flex items-center gap-1.5">
-              <i data-lucide="swords" class="w-3.5 h-3.5"></i> Daily Raids
-            </p>
-            <div id="portals-raids" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-          </div>
+      <!-- ---------- RIGHT: sentinel + github ---------- -->
+      <div class="col col-right">
+        <section class="panel" id="sentinel">
+          <header class="p-head">
+            <h2>Sentinel</h2>
+            <div class="p-actions">
+              <span class="p-meta" id="sent-sum"></span>
+              <button class="icon-btn sm" id="sent-refresh" title="Check now"><svg class="ic"><use href="#i-refresh" /></svg></button>
+            </div>
+          </header>
+          <ul class="svc-list" id="svc-list"></ul>
+          <form class="svc-form" id="svc-form" autocomplete="off">
+            <input name="name" placeholder="Name" maxlength="30" aria-label="Service name" required>
+            <input name="url" placeholder="http://192.168.1.10:8096" aria-label="Service URL" spellcheck="false" required>
+            <button class="icon-btn" title="Watch this service"><svg class="ic"><use href="#i-plus" /></svg></button>
+          </form>
+        </section>
 
-          <!-- System Vault -->
-          <div class="mb-5">
-            <p
-              class="text-[0.68rem] font-display tracking-[0.2em] text-[var(--cyan)] uppercase mb-2 flex items-center gap-1.5">
-              <i data-lucide="vault" class="w-3.5 h-3.5"></i> System Vault
-            </p>
-            <div id="portals-vault" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-          </div>
-
-          <!-- Guild Links -->
-          <div>
-            <p
-              class="text-[0.68rem] font-display tracking-[0.2em] text-purple-400 uppercase mb-2 flex items-center gap-1.5">
-              <i data-lucide="shield" class="w-3.5 h-3.5"></i> Guild Links
-            </p>
-            <div id="portals-guild" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- ---------- RIGHT: MAIL PANEL ---------- -->
-      <section class="xl:col-span-3 panel p-5 flex flex-col fade-up" style="animation-delay:0.2s">
-        <div class="hud-corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span
-            class="br"></span></div>
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <i data-lucide="mail" class="w-4 h-4 text-[var(--cyan)]"></i>
-            <h2 class="panel-title text-sm">System Messages</h2>
-          </div>
-          <button id="mail-popout" title="Open in new tab" class="text-[var(--text-mid)] hover:text-[var(--cyan)]">
-            <i data-lucide="external-link" class="w-4 h-4"></i>
-          </button>
-        </div>
-
-        <div class="flex flex-wrap gap-1.5 mb-3">
-          <button data-mail="gmail" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Gmail</button>
-          <button data-mail="outlook" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Outlook</button>
-          <button data-mail="proton" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Proton</button>
-          <button data-mail="custom" class="btn-system mail-tab px-2.5 py-1 text-[0.62rem]">Custom</button>
-        </div>
-
-        <div class="relative flex-1 min-h-[300px] border border-[rgba(0,240,255,0.15)] overflow-hidden bg-black/30">
-          <iframe id="mail-frame" src="about:blank" class="w-full h-full min-h-[300px]" title="Webmail"></iframe>
-          <div id="mail-blocked-overlay"
-            class="hidden absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[rgba(5,7,10,0.9)] text-center p-4">
-            <i data-lucide="shield-alert" class="w-8 h-8 text-[var(--danger)]"></i>
-            <p class="text-xs text-[var(--text-mid)] font-display tracking-wide leading-relaxed">This provider blocks
-              embedding.<br>Launch it directly instead.</p>
-            <button id="mail-blocked-launch" class="btn-system px-4 py-1.5">Launch Mail <i data-lucide="external-link"
-                class="w-3 h-3 inline ml-1"></i></button>
-          </div>
-        </div>
-      </section>
-
+        <section class="panel feed-panel" id="gh">
+          <header class="p-head">
+            <h2>GitHub</h2>
+            <div class="p-actions">
+              <span class="p-meta" id="gh-updated"></span>
+              <button class="icon-btn sm" id="gh-refresh" title="Refresh"><svg class="ic"><use href="#i-refresh" /></svg></button>
+            </div>
+          </header>
+          <div id="gh-body"></div>
+        </section>
+      </div>
     </div>
 
-    <footer class="text-center text-[0.62rem] text-[var(--text-dim)] font-display tracking-[0.25em] uppercase py-2">
-      System Interface v1.0 — Arise
-    </footer>
+    <footer class="foot"><span class="dot" id="foot-dot"></span><span id="foot-txt">Avalon OS</span><span class="foot-sep">·</span><kbd>&gt;</kbd> commands<span class="foot-sep">·</span><kbd>?</kbd> shortcuts</footer>
+  </main>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <!-- ============ IDLE / STARTUP SCREEN ============ -->
+  <div class="idle" id="idle" hidden>
+    <div class="idle-sparkles" id="idle-sparkles" aria-hidden="true"></div>
+    <div class="idle-center">
+      <div class="idle-sigil" aria-hidden="true"><i></i><i></i></div>
+      <svg class="idle-mark" viewBox="-20 -20 624 166" role="img" aria-label="Avalon">
+        <defs>
+          <linearGradient id="g-sheen" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity="0" /><stop offset=".5" stop-color="#fff" stop-opacity=".85" /><stop offset="1" stop-color="#fff" stop-opacity="0" />
+          </linearGradient>
+          <clipPath id="lon-clip">
+            <path d="M272 0h24v86h52v22h-76z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M384 0h56l22 22v64l-22 22h-56l-22-22V22zM392 24h40l6 6v48l-6 6h-40l-6-6V30z" />
+            <path d="M478 0h24l52 70V0h22v108h-24l-52-70v70h-22z" />
+          </clipPath>
+        </defs>
+        <g class="tris">
+          <g class="part t1"><path fill="url(#g-gold)" d="M0 108 58 0l58 108z" /><path fill="#b2892c" opacity=".45" d="M58 30 22 98h36z" /></g>
+          <g class="part t2"><path fill="url(#g-gold)" d="M66 0h118l-59 108z" /><path fill="#b2892c" opacity=".45" d="M125 72 94 14h31z" /></g>
+          <g class="part t3"><path fill="url(#g-gold)" d="M134 108 192 0l58 108z" /><path fill="#b2892c" opacity=".45" d="M192 30 156 98h36z" /></g>
+          <g class="dot d1"><circle class="halo" cx="58" cy="72" r="10" fill="#62e6f0" filter="url(#f-glow)" /><circle cx="58" cy="72" r="4.5" fill="#62e6f0" /></g>
+          <g class="dot d2"><circle class="halo" cx="125" cy="36" r="10" fill="#62e6f0" filter="url(#f-glow)" /><circle cx="125" cy="36" r="4.5" fill="#62e6f0" /></g>
+          <g class="dot d3"><circle class="halo" cx="192" cy="72" r="10" fill="#62e6f0" filter="url(#f-glow)" /><circle cx="192" cy="72" r="4.5" fill="#62e6f0" /></g>
+        </g>
+        <g fill="url(#g-chrome)">
+          <path class="part l1" d="M272 0h24v86h52v22h-76z" />
+          <path class="part l2" fill-rule="evenodd" d="M384 0h56l22 22v64l-22 22h-56l-22-22V22zM392 24h40l6 6v48l-6 6h-40l-6-6V30z" />
+          <path class="part l3" d="M478 0h24l52 70V0h22v108h-24l-52-70v70h-22z" />
+        </g>
+        <g clip-path="url(#lon-clip)"><path class="sheen" d="M200 -10h46l-40 130h-46z" fill="url(#g-sheen)" /></g>
+        <path class="part bar" d="M456 117h128l-7 6H449z" fill="url(#g-gold)" />
+      </svg>
+      <p class="idle-kana" lang="ja"><span>ア</span><span>ヴ</span><span>ァ</span><span>ロ</span><span>ン</span></p>
+      <p class="idle-tag">The isle beyond the mist</p>
+      <div class="idle-info">
+        <div class="idle-clock" id="idle-clock">00:00</div>
+        <p class="idle-sub" id="idle-sub"></p>
+      </div>
+    </div>
+    <p class="idle-hint">Press any key or click to enter</p>
   </div>
 
-  <script>
-    lucide.createIcons();
-
-    /* =====================================================================
-       STATE MANAGEMENT
-       ===================================================================== */
-    const STORAGE_KEY = 'system_hud_state_v1';
-
-    const DEFAULT_STATE = {
-      username: 'HUNTER',
-      xp: 0,
-      level: 1,
-      location: { lat: 38.7223, lon: -9.1393, label: 'Lisbon' },
-      customMailUrl: '',
-      searchEngine: 'google',
-      searxUrl: '',
-      activeMailTab: 'gmail',
-      quests: [
-        { id: cryptoId(), text: 'Complete 100 push-ups', done: false },
-        { id: cryptoId(), text: 'Read for 30 minutes', done: false },
-        { id: cryptoId(), text: 'Review daily goals', done: false },
-      ],
-      portals: {
-        raids: [
-          { id: cryptoId(), name: 'GitHub', url: 'https://github.com', srank: false },
-          { id: cryptoId(), name: 'Claude', url: 'https://claude.ai', srank: true },
-          { id: cryptoId(), name: 'ChatGPT', url: 'https://chat.openai.com', srank: false },
-        ],
-        vault: [
-          { id: cryptoId(), name: 'YouTube', url: 'https://youtube.com', srank: false },
-          { id: cryptoId(), name: 'Crunchyroll', url: 'https://crunchyroll.com', srank: false },
-          { id: cryptoId(), name: 'Steam', url: 'https://store.steampowered.com', srank: false },
-        ],
-        guild: [
-          { id: cryptoId(), name: 'Discord', url: 'https://discord.com/app', srank: false },
-        ],
-      },
-    };
-
-    function cryptoId() {
-      return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-    }
-
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return structuredClone(DEFAULT_STATE);
-        const parsed = JSON.parse(raw);
-        // merge with defaults to survive schema additions
-        return {
-          ...structuredClone(DEFAULT_STATE), ...parsed,
-          location: { ...DEFAULT_STATE.location, ...(parsed.location || {}) },
-          portals: { ...structuredClone(DEFAULT_STATE.portals), ...(parsed.portals || {}) }
-        };
-      } catch (e) {
-        console.error('Failed to load system state, reverting to defaults.', e);
-        return structuredClone(DEFAULT_STATE);
-      }
-    }
-
-    let state = loadState();
-
-    function saveState() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {
-        console.error('Failed to persist system state.', e);
-      }
-    }
-
-    /* =====================================================================
-       LEVEL / XP SYSTEM
-       ===================================================================== */
-    const RANKS = [
-      { min: 1, max: 4, name: 'E-Rank Hunter' },
-      { min: 5, max: 9, name: 'D-Rank Hunter' },
-      { min: 10, max: 14, name: 'C-Rank Hunter' },
-      { min: 15, max: 19, name: 'B-Rank Hunter' },
-      { min: 20, max: 29, name: 'A-Rank Hunter' },
-      { min: 30, max: 9999, name: 'S-Rank Hunter' },
-    ];
-
-    function xpNeededForLevel(level) {
-      // scaling curve, grows each level
-      return Math.round(100 * Math.pow(1.15, level - 1));
-    }
-
-    function rankForLevel(level) {
-      return RANKS.find(r => level >= r.min && level <= r.max)?.name || 'E-Rank Hunter';
-    }
-
-    function addXP(amount) {
-      state.xp += amount;
-      let needed = xpNeededForLevel(state.level);
-      let leveledUp = false;
-      while (state.xp >= needed) {
-        state.xp -= needed;
-        state.level += 1;
-        leveledUp = true;
-        needed = xpNeededForLevel(state.level);
-      }
-      saveState();
-      renderPlayerStatus();
-      if (leveledUp) showLevelUp();
-    }
-
-    function removeXP(amount) {
-      // reverse XP if a task is unchecked (no level-down, just floor at 0 of current level)
-      state.xp = Math.max(0, state.xp - amount);
-      saveState();
-      renderPlayerStatus();
-    }
-
-    function showLevelUp() {
-      const toast = document.getElementById('level-up-toast');
-      document.getElementById('level-up-text').textContent = `LEVEL ${state.level}`;
-      toast.classList.add('show');
-      playLevelUpChime();
-      setTimeout(() => toast.classList.remove('show'), 2600);
-    }
-
-    function playLevelUpChime() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [523.25, 659.25, 783.99, 1046.5];
-        notes.forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
-          gain.gain.value = 0.0001;
-          osc.connect(gain).connect(ctx.destination);
-          const start = ctx.currentTime + i * 0.09;
-          gain.gain.exponentialRampToValueAtTime(0.12, start + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.35);
-          osc.start(start);
-          osc.stop(start + 0.4);
-        });
-      } catch (e) { /* audio not available, fail silently */ }
-    }
-
-    function renderPlayerStatus() {
-      document.getElementById('player-level').textContent = state.level;
-      document.getElementById('player-rank').textContent = rankForLevel(state.level);
-      const needed = xpNeededForLevel(state.level);
-      document.getElementById('xp-current').textContent = state.xp;
-      document.getElementById('xp-needed').textContent = needed;
-      document.getElementById('xp-fill').style.width = `${Math.min(100, (state.xp / needed) * 100)}%`;
-      document.getElementById('greeting-text').textContent = `WELCOME, HUNTER ${state.username.toUpperCase()}`;
-    }
-
-    /* =====================================================================
-       DAILY QUEST CHECKLIST
-       ===================================================================== */
-    const XP_PER_TASK = 15;
-
-    function renderQuests() {
-      const list = document.getElementById('quest-list');
-      list.innerHTML = '';
-
-      if (state.quests.length === 0) {
-        list.innerHTML = `<p class="text-xs text-[var(--text-dim)] font-display tracking-wide text-center py-6">No active quests. Add a task to begin.</p>`;
-      }
-
-      state.quests.forEach(q => {
-        const row = document.createElement('div');
-        row.className = `quest-item flex items-center gap-3 px-2 py-2 rounded ${q.done ? 'done' : ''}`;
-        row.innerHTML = `
-      <div class="checkbox-diamond ${q.done ? 'checked' : ''}" data-id="${q.id}" role="checkbox" aria-checked="${q.done}" tabindex="0">
-        <div class="inner-dot"></div>
+  <!-- ============ LINK DIALOG ============ -->
+  <dialog id="link-dlg" class="dlg">
+    <form method="dialog" class="dlg-body" id="link-form">
+      <header class="p-head"><h2 id="link-dlg-title">New link</h2></header>
+      <label class="field"><span>Name</span><input name="name" required maxlength="40" placeholder="Jellyfin"></label>
+      <label class="field"><span>URL</span><input name="url" required placeholder="http://192.168.1.10:8096"></label>
+      <label class="field"><span>Group</span><select name="group"></select></label>
+      <div class="dlg-actions">
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button class="btn btn-gold">Save</button>
       </div>
-      <span class="quest-label flex-1 text-sm text-[var(--text-hi)]">${escapeHtml(q.text)}</span>
-      <button class="quest-delete text-[var(--text-dim)] hover:text-[var(--danger)] transition-colors" data-id="${q.id}" aria-label="Delete task">
-        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-      </button>
-    `;
-        list.appendChild(row);
-      });
+    </form>
+  </dialog>
 
-      lucide.createIcons();
-      updateQuestProgress();
-    }
+  <!-- ============ SETTINGS DIALOG ============ -->
+  <dialog id="settings-dlg" class="dlg dlg-wide">
+    <form method="dialog" class="dlg-body" id="settings-form">
+      <header class="p-head">
+        <h2>Settings</h2>
+        <button type="button" class="icon-btn" data-close title="Close"><svg class="ic"><use href="#i-x" /></svg></button>
+      </header>
+      <nav class="set-tabs" id="set-tabs">
+        <button type="button" data-tab="general" class="on">General</button>
+        <button type="button" data-tab="search">Search</button>
+        <button type="button" data-tab="github">GitHub</button>
+        <button type="button" data-tab="news">Feed</button>
+        <button type="button" data-tab="data">Data</button>
+      </nav>
 
-    function updateQuestProgress() {
-      const total = state.quests.length;
-      const done = state.quests.filter(q => q.done).length;
-      document.getElementById('quest-progress-text').textContent = `${done} / ${total} TASKS COMPLETE`;
-    }
+      <div class="set-page" data-page="general">
+        <div class="set-grid">
+          <label class="field"><span>Your name</span><input name="name" maxlength="24" placeholder="optional"></label>
+          <label class="field"><span>Clock</span><select name="clock24"><option value="1">24-hour</option><option value="0">12-hour</option></select></label>
+          <div class="field span2">
+            <span>Weather location</span>
+            <div class="row">
+              <input id="city-input" placeholder="Search a city…">
+              <button type="button" class="btn" id="city-search">Find</button>
+              <button type="button" class="icon-btn bordered" id="geo-btn" title="Use my location"><svg class="ic"><use href="#i-pin" /></svg></button>
+            </div>
+            <ul class="city-results" id="city-results"></ul>
+            <small class="muted" id="loc-current"></small>
+          </div>
+          <label class="field"><span>Temperature</span><select name="units"><option value="C">Celsius</option><option value="F">Fahrenheit</option></select></label>
+          <label class="field"><span>Focus / break / long break (min)</span>
+            <div class="row"><input name="focus" type="number" min="1" max="180"><input name="short" type="number" min="1" max="60"><input name="long" type="number" min="1" max="90"></div>
+          </label>
+          <label class="check"><input type="checkbox" name="newTab"> Open links in a new tab</label>
+          <label class="check"><input type="checkbox" name="sound"> Sounds</label>
+          <label class="check"><input type="checkbox" name="effects"> Animated guardian &amp; sparkles</label>
+          <label class="check"><input type="checkbox" name="notify"> Desktop notification when focus ends</label>
+          <label class="check"><input type="checkbox" name="idleStartup"> Idle screen when the browser starts</label>
+          <label class="field"><span>Idle screen after inactivity (min, 0 = off)</span><input name="idleAfter" type="number" min="0" max="240"></label>
+          <p class="muted span2">To always open on the idle screen, set your browser's home page to this file with <code>#idle</code> on the end. Otherwise it appears when no Avalon tab has been open for 3+ minutes.</p>
+        </div>
+      </div>
 
-    function toggleQuest(id) {
-      const q = state.quests.find(t => t.id === id);
-      if (!q) return;
-      q.done = !q.done;
-      saveState();
-      renderQuests();
-      if (q.done) addXP(XP_PER_TASK); else removeXP(XP_PER_TASK);
-    }
+      <div class="set-page" data-page="search" hidden>
+        <p class="muted">Pick the engines you search with from the badge on the right of the search bar. Bangs work at the start or end of a query —
+          <code>!yt lofi</code>, <code>lofi !yt</code>, or several at once: <code>!g !d rust</code>. A bang on its own opens the site. Use <code>%s</code> where the query goes.</p>
+        <div class="bang-table" id="bang-table"></div>
+        <button type="button" class="btn btn-sm" id="bang-add"><svg class="ic"><use href="#i-plus" /></svg>Add bang</button>
+        <label class="check mt"><input type="checkbox" name="history"> Remember recent searches</label>
+      </div>
 
-    function deleteQuest(id) {
-      state.quests = state.quests.filter(t => t.id !== id);
-      saveState();
-      renderQuests();
-    }
+      <div class="set-page" data-page="github" hidden>
+        <label class="field"><span>GitHub username</span><input name="ghUser" placeholder="octocat" autocomplete="off" spellcheck="false"></label>
+        <label class="field"><span>Personal access token (optional)</span><input name="ghToken" type="password" autocomplete="off" placeholder="ghp_…"></label>
+        <p class="muted">Without a token you get public activity (60 requests/hour, cached for 10 minutes). A <b>classic</b> token with the
+          <code>notifications</code> and <code>read:user</code> scopes adds your inbox, private activity and the contribution graph.
+          The token is stored in this browser's local storage only and is sent only to api.github.com.</p>
+      </div>
 
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+      <div class="set-page" data-page="news" hidden>
+        <div class="field"><span>Sources</span>
+          <div class="checks">
+            <label class="check"><input type="checkbox" name="src_hn"> Hacker News</label>
+            <label class="check"><input type="checkbox" name="src_show"> Show HN</label>
+            <label class="check"><input type="checkbox" name="src_devto"> dev.to</label>
+            <label class="check"><input type="checkbox" name="src_trending"> GitHub rising repos</label>
+          </div>
+        </div>
+        <label class="field"><span>Interests (comma separated)</span><input name="interests" placeholder="ai, self-hosted, rust"></label>
+        <p class="muted">Stories mentioning an interest are marked in gold and collected in the <b>For you</b> tab.</p>
+      </div>
 
-    document.getElementById('quest-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const input = document.getElementById('quest-input');
-      const text = input.value.trim();
-      if (!text) return;
-      state.quests.push({ id: cryptoId(), text, done: false });
-      saveState();
-      renderQuests();
-      input.value = '';
-      input.focus();
-    });
+      <div class="set-page" data-page="data" hidden>
+        <p class="muted">Everything lives in this browser's local storage. Export a backup now and then.</p>
+        <div class="set-data">
+          <button type="button" class="btn btn-sm" id="export-btn"><svg class="ic"><use href="#i-download" /></svg>Export</button>
+          <label class="btn btn-sm"><svg class="ic"><use href="#i-upload" /></svg>Import<input type="file" id="import-input" accept="application/json" hidden></label>
+          <button type="button" class="btn btn-sm" id="clear-history">Clear search history</button>
+          <button type="button" class="link-btn danger" id="reset-btn">Reset everything</button>
+        </div>
+      </div>
 
-    document.getElementById('quest-list').addEventListener('click', (e) => {
-      const box = e.target.closest('.checkbox-diamond');
-      const del = e.target.closest('.quest-delete');
-      if (box) toggleQuest(box.dataset.id);
-      if (del) deleteQuest(del.dataset.id);
-    });
-    document.getElementById('quest-list').addEventListener('keydown', (e) => {
-      const box = e.target.closest('.checkbox-diamond');
-      if (box && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        toggleQuest(box.dataset.id);
-      }
-    });
+      <div class="dlg-actions">
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button class="btn btn-gold">Save</button>
+      </div>
+    </form>
+  </dialog>
 
-    /* =====================================================================
-       CLOCK
-       ===================================================================== */
-    function updateClock() {
-      const now = new Date();
-      const h = now.getHours();
-      const hh = h % 12 === 0 ? 12 : h % 12;
-      const mm = String(now.getMinutes()).padStart(2, '0');
-      const ss = String(now.getSeconds()).padStart(2, '0');
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      document.getElementById('clock-time').textContent = `${String(hh).padStart(2, '0')}:${mm}:${ss} ${ampm}`;
+  <!-- ============ HELP DIALOG ============ -->
+  <dialog id="help-dlg" class="dlg">
+    <div class="dlg-body">
+      <header class="p-head">
+        <h2>Shortcuts</h2>
+        <button type="button" class="icon-btn" data-close title="Close"><svg class="ic"><use href="#i-x" /></svg></button>
+      </header>
+      <dl class="keys">
+        <dt><kbd>/</kbd> <kbd>Ctrl K</kbd></dt><dd>Focus search</dd>
+        <dt><kbd>&gt;</kbd></dt><dd>Command palette (in the search bar)</dd>
+        <dt><kbd>C</kbd></dt><dd>Calendar</dd>
+        <dt><kbd>↑</kbd> <kbd>↓</kbd> <kbd>Tab</kbd></dt><dd>Pick / complete a suggestion</dd>
+        <dt><kbd>Ctrl Enter</kbd></dt><dd>Open the result in a new tab</dd>
+        <dt><kbd>1</kbd>–<kbd>9</kbd></dt><dd>Open link by number</dd>
+        <dt><kbd>T</kbd> / <kbd>N</kbd></dt><dd>Add a task / routine item</dd>
+        <dt><kbd>F</kbd></dt><dd>Start or pause focus</dd>
+        <dt><kbd>M</kbd></dt><dd>Memo</dd>
+        <dt><kbd>R</kbd></dt><dd>Refresh feed &amp; GitHub</dd>
+        <dt><kbd>E</kbd></dt><dd>Edit links</dd>
+        <dt><kbd>I</kbd></dt><dd>Lock / idle screen</dd>
+      </dl>
+      <h3 class="sub-h">Search</h3>
+      <p class="muted">Click the engine badge to switch engines or tick several · <code>!g !d rust</code> searches both · <code>= 2^10/4</code> calculates ·
+        a URL or <code>host:port</code> opens directly · typing a link name opens it.</p>
+      <div class="bang-list" id="bang-list"></div>
+    </div>
+  </dialog>
 
-      const dateStr = now.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
-      document.getElementById('clock-date').textContent = dateStr;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    /* =====================================================================
-       WEATHER (Open-Meteo, no API key required)
-       ===================================================================== */
-    const WMO_MAP = {
-      0: { label: 'Clear', icon: 'sun' },
-      1: { label: 'Mostly Clear', icon: 'sun' },
-      2: { label: 'Partly Cloudy', icon: 'cloud-sun' },
-      3: { label: 'Overcast', icon: 'cloud' },
-      45: { label: 'Fog', icon: 'cloud-fog' },
-      48: { label: 'Fog', icon: 'cloud-fog' },
-      51: { label: 'Drizzle', icon: 'cloud-drizzle' },
-      53: { label: 'Drizzle', icon: 'cloud-drizzle' },
-      55: { label: 'Drizzle', icon: 'cloud-drizzle' },
-      61: { label: 'Rain', icon: 'cloud-rain' },
-      63: { label: 'Rain', icon: 'cloud-rain' },
-      65: { label: 'Heavy Rain', icon: 'cloud-rain-wind' },
-      71: { label: 'Snow', icon: 'cloud-snow' },
-      73: { label: 'Snow', icon: 'cloud-snow' },
-      75: { label: 'Heavy Snow', icon: 'cloud-snow' },
-      80: { label: 'Showers', icon: 'cloud-rain' },
-      81: { label: 'Showers', icon: 'cloud-rain' },
-      82: { label: 'Violent Showers', icon: 'cloud-rain-wind' },
-      95: { label: 'Thunderstorm', icon: 'cloud-lightning' },
-      96: { label: 'Thunderstorm', icon: 'cloud-lightning' },
-      99: { label: 'Thunderstorm', icon: 'cloud-lightning' },
-    };
-
-    async function fetchWeather() {
-      const widget = document.getElementById('weather-widget');
-      try {
-        const { lat, lon } = state.location;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=celsius`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Weather fetch failed');
-        const data = await res.json();
-        const temp = Math.round(data.current.temperature_2m);
-        const code = data.current.weather_code;
-        const info = WMO_MAP[code] || { label: 'Unknown', icon: 'cloud' };
-        widget.innerHTML = `
-      <i data-lucide="${info.icon}" class="w-5 h-5 text-[var(--cyan)]"></i>
-      <span class="text-sm font-display font-semibold text-white">${temp}°C</span>
-      <span class="text-[0.62rem] text-[var(--text-mid)] font-display tracking-wide uppercase hidden md:inline">${info.label}</span>
-    `;
-        lucide.createIcons();
-      } catch (e) {
-        widget.innerHTML = `
-      <i data-lucide="cloud-off" class="w-5 h-5 text-[var(--text-dim)]"></i>
-      <span class="text-[0.65rem] text-[var(--text-dim)] font-display">N/A</span>
-    `;
-        lucide.createIcons();
-      }
-    }
-    fetchWeather();
-    setInterval(fetchWeather, 15 * 60 * 1000); // refresh every 15 min
-
-    /* =====================================================================
-       SEARCH BAR
-       ===================================================================== */
-    const SEARCH_ENGINES = {
-      google: 'https://www.google.com/search?q=',
-      duckduckgo: 'https://duckduckgo.com/?q=',
-    };
-
-    document.getElementById('search-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const q = document.getElementById('search-input').value.trim();
-      if (!q) return;
-      let base;
-      if (state.searchEngine === 'searxng' && state.searxUrl) {
-        base = state.searxUrl;
-      } else {
-        base = SEARCH_ENGINES[state.searchEngine] || SEARCH_ENGINES.google;
-      }
-      window.location.href = base + encodeURIComponent(q);
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-        e.preventDefault();
-        document.getElementById('search-input').focus();
-      }
-      if (e.key === 'Escape') {
-        document.getElementById('search-input').blur();
-        closeModal('settings-modal');
-        closeModal('portal-modal');
-      }
-    });
-    // autofocus search on load
-    window.addEventListener('load', () => document.getElementById('search-input').focus());
-
-    /* =====================================================================
-       PORTALS (bookmarks)
-       ===================================================================== */
-    function faviconFor(url) {
-      try {
-        const u = new URL(url);
-        return `https://www.google.com/s2/favicons?sz=64&domain=${u.hostname}`;
-      } catch {
-        return '';
-      }
-    }
-
-    function renderPortals() {
-      ['raids', 'vault', 'guild'].forEach(cat => {
-        const container = document.getElementById(`portals-${cat}`);
-        container.innerHTML = '';
-        const items = state.portals[cat] || [];
-        if (items.length === 0) {
-          container.innerHTML = `<p class="text-[0.65rem] text-[var(--text-dim)] font-display col-span-full">No portals yet.</p>`;
-          return;
-        }
-        items.forEach(p => {
-          const card = document.createElement('a');
-          card.href = p.url;
-          card.target = '_self';
-          card.className = `portal-card group flex flex-col items-center justify-center gap-1.5 p-3 rounded ${p.srank ? 'rank-s' : ''}`;
-          card.innerHTML = `
-        <button class="delete-x absolute top-1 right-1 text-[var(--text-dim)] hover:text-[var(--danger)] z-10" data-id="${p.id}" data-cat="${cat}" aria-label="Remove portal">
-          <i data-lucide="x" class="w-3.5 h-3.5"></i>
-        </button>
-        ${p.srank ? `<span class="absolute top-1 left-1.5 badge-rank text-purple-400">S</span>` : ''}
-        <img src="${faviconFor(p.url)}" class="w-6 h-6 rounded-sm" onerror="this.style.display='none'" alt="">
-        <span class="text-[0.7rem] font-display tracking-wide text-[var(--text-hi)] text-center truncate w-full">${escapeHtml(p.name)}</span>
-      `;
-          container.appendChild(card);
-        });
-      });
-      lucide.createIcons();
-    }
-
-    document.querySelectorAll('[id^="portals-"]').forEach(el => {
-      el.addEventListener('click', (e) => {
-        const del = e.target.closest('.delete-x');
-        if (del) {
-          e.preventDefault();
-          e.stopPropagation();
-          const { id, cat } = del.dataset;
-          state.portals[cat] = state.portals[cat].filter(p => p.id !== id);
-          saveState();
-          renderPortals();
-        }
-      });
-    });
-
-    // Add portal modal
-    function openModal(id) {
-      const m = document.getElementById(id);
-      m.classList.remove('hidden');
-      m.classList.add('flex');
-    }
-    function closeModal(id) {
-      const m = document.getElementById(id);
-      m.classList.add('hidden');
-      m.classList.remove('flex');
-    }
-
-    document.getElementById('add-portal-btn').addEventListener('click', () => openModal('portal-modal'));
-    document.getElementById('portal-cancel').addEventListener('click', () => closeModal('portal-modal'));
-    document.getElementById('portal-save').addEventListener('click', () => {
-      const name = document.getElementById('portal-name').value.trim();
-      let url = document.getElementById('portal-url').value.trim();
-      const cat = document.getElementById('portal-category').value;
-      const srank = document.getElementById('portal-srank').checked;
-      if (!name || !url) return;
-      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-      state.portals[cat].push({ id: cryptoId(), name, url, srank });
-      saveState();
-      renderPortals();
-      document.getElementById('portal-name').value = '';
-      document.getElementById('portal-url').value = '';
-      document.getElementById('portal-srank').checked = false;
-      closeModal('portal-modal');
-    });
-
-    /* =====================================================================
-       MAIL PANEL
-       ===================================================================== */
-    const MAIL_PROVIDERS = {
-      gmail: 'https://mail.google.com/mail/u/0/#inbox',
-      outlook: 'https://outlook.live.com/mail/0/inbox',
-      proton: 'https://mail.proton.me/u/0/inbox',
-      custom: '', // filled from state.customMailUrl
-    };
-
-    // Providers known to reliably block iframe embedding via X-Frame-Options / CSP.
-    // We can't read the response headers of a cross-origin iframe (browser security),
-    // so we proactively show the "launch externally" fallback for providers known to block,
-    // and let the iframe attempt to load for anything else (custom URLs).
-    const KNOWN_BLOCKED = new Set(['gmail', 'outlook', 'proton']);
-
-    function loadMail(tab) {
-      state.activeMailTab = tab;
-      saveState();
-
-      document.querySelectorAll('.mail-tab').forEach(btn => {
-        btn.classList.toggle('active-tab', btn.dataset.mail === tab);
-      });
-
-      const frame = document.getElementById('mail-frame');
-      const overlay = document.getElementById('mail-blocked-overlay');
-      const url = tab === 'custom' ? state.customMailUrl : MAIL_PROVIDERS[tab];
-
-      if (!url) {
-        overlay.classList.remove('hidden');
-        frame.src = 'about:blank';
-        overlay.querySelector('p').innerHTML = 'No custom webmail URL set.<br>Add one in System Configuration.';
-        return;
-      }
-
-      if (KNOWN_BLOCKED.has(tab)) {
-        // These providers set X-Frame-Options: DENY / frame-ancestors 'none' — show fallback immediately.
-        overlay.classList.remove('hidden');
-        overlay.querySelector('p').innerHTML = 'This provider blocks embedding.<br>Launch it directly instead.';
-        frame.src = 'about:blank';
-      } else {
-        overlay.classList.add('hidden');
-        frame.src = url;
-      }
-    }
-
-    document.querySelectorAll('.mail-tab').forEach(btn => {
-      btn.addEventListener('click', () => loadMail(btn.dataset.mail));
-    });
-
-    document.getElementById('mail-blocked-launch').addEventListener('click', () => {
-      const url = state.activeMailTab === 'custom' ? state.customMailUrl : MAIL_PROVIDERS[state.activeMailTab];
-      if (url) window.open(url, '_blank', 'noopener');
-    });
-
-    document.getElementById('mail-popout').addEventListener('click', () => {
-      const url = state.activeMailTab === 'custom' ? state.customMailUrl : MAIL_PROVIDERS[state.activeMailTab];
-      if (url) window.open(url, '_blank', 'noopener');
-    });
-
-    /* =====================================================================
-       SETTINGS MODAL
-       ===================================================================== */
-    document.getElementById('open-settings').addEventListener('click', () => {
-      document.getElementById('input-username').value = state.username;
-      document.getElementById('input-lat').value = state.location.lat;
-      document.getElementById('input-lon').value = state.location.lon;
-      document.getElementById('input-custom-mail').value = state.customMailUrl;
-      document.getElementById('input-search-engine').value = state.searchEngine;
-      document.getElementById('input-searx-url').value = state.searxUrl;
-      document.getElementById('input-searx-url').classList.toggle('hidden', state.searchEngine !== 'searxng');
-      openModal('settings-modal');
-    });
-    document.getElementById('close-settings').addEventListener('click', () => closeModal('settings-modal'));
-
-    document.getElementById('input-search-engine').addEventListener('change', (e) => {
-      document.getElementById('input-searx-url').classList.toggle('hidden', e.target.value !== 'searxng');
-    });
-
-    document.getElementById('btn-geo').addEventListener('click', () => {
-      if (!navigator.geolocation) return;
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          document.getElementById('input-lat').value = pos.coords.latitude.toFixed(4);
-          document.getElementById('input-lon').value = pos.coords.longitude.toFixed(4);
-        },
-        () => alert('Location access denied. Enter coordinates manually.')
-      );
-    });
-
-    document.getElementById('save-settings').addEventListener('click', () => {
-      state.username = document.getElementById('input-username').value.trim() || 'HUNTER';
-      const lat = parseFloat(document.getElementById('input-lat').value);
-      const lon = parseFloat(document.getElementById('input-lon').value);
-      if (!isNaN(lat) && !isNaN(lon)) state.location = { lat, lon, label: '' };
-      state.customMailUrl = document.getElementById('input-custom-mail').value.trim();
-      state.searchEngine = document.getElementById('input-search-engine').value;
-      state.searxUrl = document.getElementById('input-searx-url').value.trim();
-      MAIL_PROVIDERS.custom = state.customMailUrl;
-      saveState();
-      renderPlayerStatus();
-      fetchWeather();
-      if (state.activeMailTab === 'custom') loadMail('custom');
-      closeModal('settings-modal');
-    });
-
-    document.getElementById('btn-reset-data').addEventListener('click', () => {
-      if (confirm('This will erase all quests, XP, and portals permanently. Continue?')) {
-        localStorage.removeItem(STORAGE_KEY);
-        state = structuredClone(DEFAULT_STATE);
-        saveState();
-        renderAll();
-        closeModal('settings-modal');
-      }
-    });
-
-    // close modals on backdrop click
-    [['settings-modal'], ['portal-modal']].forEach(([id]) => {
-      document.getElementById(id).addEventListener('click', (e) => {
-        if (e.target.id === id) closeModal(id);
-      });
-    });
-
-    /* =====================================================================
-       AMBIENT PARTICLES
-       ===================================================================== */
-    function spawnParticles() {
-      const container = document.getElementById('particles');
-      const count = 30;
-      for (let i = 0; i < count; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = `${Math.random() * 100}vw`;
-        p.style.animationDuration = `${10 + Math.random() * 12}s`;
-        p.style.animationDelay = `${Math.random() * 14}s`;
-        container.appendChild(p);
-      }
-    }
-    spawnParticles();
-
-    /* =====================================================================
-       INIT
-       ===================================================================== */
-    function renderAll() {
-      MAIL_PROVIDERS.custom = state.customMailUrl;
-      renderPlayerStatus();
-      renderQuests();
-      renderPortals();
-      loadMail(state.activeMailTab || 'gmail');
-      lucide.createIcons();
-    }
-    renderAll();
-  </script>
-
+  <script src="app.js"></script>
 </body>
 
 </html>
