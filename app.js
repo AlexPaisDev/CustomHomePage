@@ -78,6 +78,7 @@ function defaults() {
       multiMode: 'tabs',          // several engines → 'tabs' or 'avalon' (combined results page)
       searxUrl: '', wikiLang: 'en',
       idleStartup: true, idleAfter: 0,
+      onOpen: 'intro',            // what plays when the page opens: 'intro' | 'lock' | 'none'
       units: 'C', clock24: true,
       location: { name: 'Lisbon, Portugal', lat: 38.7223, lon: -9.1393 },
       focus: 25, short: 5, long: 15,
@@ -1401,7 +1402,7 @@ function openSettings(tab = 'general') {
   sf.units.value = s.units;
   sf.focus.value = s.focus; sf.short.value = s.short; sf.long.value = s.long;
   sf.newTab.checked = s.newTab; sf.sound.checked = s.sound; sf.effects.checked = s.effects; sf.notify.checked = s.notify;
-  sf.idleStartup.checked = s.idleStartup; sf.idleAfter.value = s.idleAfter;
+  sf.idleStartup.checked = s.idleStartup; sf.idleAfter.value = s.idleAfter; sf.onOpen.value = s.onOpen;
   sf.history.checked = s.history;
   sf.multiMode.value = s.multiMode; sf.wikiLang.value = s.wikiLang; sf.searxUrl.value = s.searxUrl;
   $('#searx-result').textContent = '';
@@ -1461,6 +1462,7 @@ sf.addEventListener('submit', () => {
     // keep picked engines that still exist after bang edits
     engines: s.engines.filter(k => S.bangs.some(b => b.k === k)),
     idleStartup: sf.idleStartup.checked, idleAfter: clamp(sf.idleAfter.value, 0, 240, 0),
+    onOpen: ['intro', 'lock', 'none'].includes(sf.onOpen.value) ? sf.onOpen.value : 'intro',
     multiMode: sf.multiMode.value,
     wikiLang: (sf.wikiLang.value.trim().toLowerCase().match(/^[a-z-]{2,10}$/) || ['en'])[0],
     searxUrl: sf.searxUrl.value.trim() ? normUrl(sf.searxUrl.value).replace(/\/+$/, '') : '',
@@ -1779,14 +1781,17 @@ function applyCollapsed() {
 
 /* ---------------------------------------------------------------------
    IDLE / STARTUP SCREEN
-   Shown: from the moon button or "I"; on #idle in the URL; when the page
-   opens and no Avalon tab has been alive for 3+ min (≈ browser start);
+   Lock screen: from the moon button or "I"; on #idle in the URL; when the
+   page opens and no Avalon tab has been alive for 3+ min (≈ browser start);
    after N idle minutes if enabled. Any key, click or scroll dismisses it.
+   Intro: the same logo animation, faster and without the clock, played on
+   every other open (Home button, new tab); it dissolves by itself.
    --------------------------------------------------------------------- */
 const ALIVE = 'avalon_alive';
 const Idle = (() => {
   const el = $('#idle');
-  let on = false, lastActive = Date.now();
+  const INTRO_MS = 1650;          // matches the --t: .55 choreography in style.css
+  let on = false, lastActive = Date.now(), introTimer = 0, enterTimer = 0;
 
   function renderInfo() {
     if (!on) return;
@@ -1802,9 +1807,12 @@ const Idle = (() => {
     if (n.total) parts.push(n.down ? `<b>${n.down} service${n.down > 1 ? 's' : ''} down</b>` : `network ${n.up}/${n.total} online`);
     $('#idle-sub').innerHTML = parts.join(' · ');
   }
-  function show() {
+  function show(intro = false) {
     if (on) return;
     on = true;
+    clearTimeout(introTimer);
+    el.classList.toggle('intro', intro);
+    if (intro) introTimer = setTimeout(() => hide(), INTRO_MS);
     closeEnginePop(false); Cal.close(); cmdList.hidden = true;
     document.body.classList.add('idling');
     if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
@@ -1812,14 +1820,20 @@ const Idle = (() => {
     el.classList.remove('leaving', 'play');
     void el.offsetWidth;            // restart the intro animation
     el.classList.add('play');
+    document.documentElement.classList.remove('av-boot');
     renderInfo();
   }
   function hide(typed) {
     if (!on) return;
     on = false; lastActive = Date.now();
+    clearTimeout(introTimer);
     document.body.classList.remove('idling');
     el.classList.add('leaving');
-    setTimeout(() => { if (!on) { el.hidden = true; el.classList.remove('leaving', 'play'); } }, 450);
+    // the dashboard settles in underneath while the overlay fades out
+    document.body.classList.remove('entering'); void document.body.offsetWidth;
+    document.body.classList.add('entering');
+    clearTimeout(enterTimer); enterTimer = setTimeout(() => document.body.classList.remove('entering'), 1300);
+    setTimeout(() => { if (!on) { el.hidden = true; el.classList.remove('leaving', 'play', 'intro'); } }, 650);
     if (location.hash === '#idle') history.replaceState(null, '', location.pathname + location.search);
     cmdInput.focus({ preventScroll: true });
     if (typed) { cmdInput.value = typed; updateCmd(); }
@@ -1925,5 +1939,11 @@ boot();
 flush();
 setInterval(tick, 1000);
 setInterval(() => Idle.check(), 15e3);
-if (location.hash === '#idle' || (S.settings.idleStartup && Date.now() - prevAlive > 3 * 60e3)) Idle.show();
-else if (!location.hash) setTimeout(() => cmdInput.focus({ preventScroll: true }), 50);
+const coldStart = S.settings.idleStartup && Date.now() - prevAlive > 3 * 60e3;
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (location.hash === '#idle' || coldStart || S.settings.onOpen === 'lock') Idle.show();
+else if (S.settings.onOpen === 'intro' && !calm) Idle.show(true);
+else {
+  document.documentElement.classList.remove('av-boot');
+  if (!location.hash) setTimeout(() => cmdInput.focus({ preventScroll: true }), 50);
+}

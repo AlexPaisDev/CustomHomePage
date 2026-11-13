@@ -14,6 +14,14 @@
   <!-- only the five katakana glyphs of the brand name -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&text=%E3%82%A2%E3%83%B4%E3%82%A1%E3%83%AD%E3%83%B3&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <!-- Hide the dashboard before first paint when the intro or lock screen is about to play (see BOOT in app.js). -->
+  <script>
+    try {
+      var o = (JSON.parse(localStorage.getItem('avalon_home_v1') || '{}').settings) || {};
+      var cold = o.idleStartup !== false && Date.now() - (+localStorage.getItem('avalon_alive') || 0) > 180000;
+      if (location.hash === '#idle' || cold || (o.onOpen || 'intro') !== 'none') document.documentElement.classList.add('av-boot');
+    } catch (e) { }
+  </script>
 </head>
 
 <body>
@@ -361,9 +369,14 @@
           <label class="check"><input type="checkbox" name="sound"> Sounds</label>
           <label class="check"><input type="checkbox" name="effects"> Animated guardian &amp; sparkles</label>
           <label class="check"><input type="checkbox" name="notify"> Desktop notification when focus ends</label>
-          <label class="check"><input type="checkbox" name="idleStartup"> Idle screen when the browser starts</label>
-          <label class="field"><span>Idle screen after inactivity (min, 0 = off)</span><input name="idleAfter" type="number" min="0" max="240"></label>
-          <p class="muted span2">To always open on the idle screen, set your browser's home page to this file with <code>#idle</code> on the end. Otherwise it appears when no Avalon tab has been open for 3+ minutes.</p>
+          <label class="field"><span>When the page opens (Home button, new tab)</span><select name="onOpen">
+            <option value="intro">Play the logo intro, then show the dashboard</option>
+            <option value="lock">Show the lock screen</option>
+            <option value="none">Go straight to the dashboard</option>
+          </select></label>
+          <label class="field"><span>Lock screen after inactivity (min, 0 = off)</span><input name="idleAfter" type="number" min="0" max="240"></label>
+          <label class="check span2"><input type="checkbox" name="idleStartup"> Lock screen when the browser starts</label>
+          <p class="muted span2">"Browser starts" means no Avalon tab has been open for 3+ minutes. Any key or click skips the intro, and a typed letter goes into search.</p>
         </div>
       </div>
 

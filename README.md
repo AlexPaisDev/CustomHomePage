@@ -12,7 +12,7 @@ Plain HTML, CSS and JavaScript. No build step, no framework, and no accounts: op
 
 | | |
 |---|---|
-| **Lock / startup screen** | Animated Avalon logo with clock, weather and network status. It appears when the browser starts, on `#idle`, from the moon button or `I`, or after a period of inactivity (optional). Any key or click enters, and a typed letter goes straight into search. |
+| **Intro and lock screen** | Every time the page opens (Home button, new tab) the Avalon logo animates in and dissolves into the dashboard. When the browser starts, on `#idle`, from the moon button or `I`, or after a period of inactivity (optional), the full lock screen shows instead, with clock, weather and network status. Any key or click skips or enters, and a typed letter goes straight into search. Choose the behaviour in Settings → General. |
 | **System bar** | Home-network status, GitHub unread count, a running focus timer, weather, lock, shortcuts, settings. |
 | **Search** | Pick one engine or several at once from the badge in the search bar (several open one tab each). Bangs at the start or end: `!yt lofi`, `lofi !yt`, `!g !d rust`. Bangs are editable in Settings. Also `= 2^10/4` for maths, `host:port` to open a LAN address, link names, and recent searches. |
 | **Avalon Search** | A combined results page (`results.html`). It queries several sources at once, merges results that point at the same page, ranks pages found by more sources higher, and labels each result with every source that found it. Open it with `!av query`, or set *several engines open as → Avalon page* in the engine picker. |
@@ -33,9 +33,9 @@ Plain HTML, CSS and JavaScript. No build step, no framework, and no accounts: op
    ```text
    file:///D:/path/to/CustomHomePage/index.html#idle
    ```
-   The `#idle` makes every browser start open on the animated lock screen. Leave it off to go
-   straight to the dashboard; the lock screen will still appear when no Avalon tab has been open
-   for 3+ minutes (switch that off in Settings → General).
+   The `#idle` makes every open show the full lock screen. Without it, each open plays the short
+   logo intro and the lock screen appears only when no Avalon tab has been open for 3+ minutes.
+   Both are set in **Settings → General → When the page opens**.
 3. Open **Settings** (sliders icon, top right) to set your name, weather city, search engines,
    GitHub username/token and feed interests.
 
