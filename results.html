@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Avalon Search</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M1 28 9 6l8 22z' fill='%23e6bd4e'/%3E%3Cpath d='M10 6h12l-6 22z' fill='%23f7dc84'/%3E%3Cpath d='M15 28 23 6l8 22z' fill='%23b2892c'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="rs-page">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f7dc84" /><stop offset=".55" stop-color="#e6bd4e" /><stop offset="1" stop-color="#b2892c" />
+      </linearGradient>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z" /><path d="m2 17 10 5 10-5M2 12l10 5 10-5" /></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4" /></symbol>
+    </defs>
+  </svg>
+
+  <div class="sky" aria-hidden="true"></div>
+
+  <header class="osbar">
+    <a class="os-left" href="index.html" title="Back to Avalon home">
+      <svg class="os-mark" viewBox="0 0 250 108" aria-hidden="true">
+        <g fill="url(#g-gold)"><path d="M0 108 58 0l58 108z" /><path d="M66 0h118l-59 108z" /><path d="M134 108 192 0l58 108z" /></g>
+        <g fill="#62e6f0"><circle cx="58" cy="72" r="7" /><circle cx="125" cy="36" r="7" /><circle cx="192" cy="72" r="7" /></g>
+      </svg>
+      <span class="os-name">Avalon</span><span class="os-ver">Search</span>
+    </a>
+    <div class="os-tray">
+      <span class="tray rs-stat" id="rs-stat"></span>
+      <a class="icon-btn sm" href="index.html" title="Home"><svg class="ic"><use href="#i-home" /></svg></a>
+    </div>
+  </header>
+
+  <main class="rs-shell">
+    <form class="cmd rs-form" id="rs-form" role="search" autocomplete="off">
+      <svg class="ic cmd-ic"><use href="#i-search" /></svg>
+      <input id="rs-q" name="q" type="text" spellcheck="false" placeholder="Search across sources…" aria-label="Search">
+      <button class="cmd-engine rs-go" type="submit"><span>Search</span></button>
+    </form>
+
+    <div class="rs-sources" id="rs-sources" aria-label="Sources"></div>
+    <div class="rs-notice" id="rs-notice" hidden></div>
+
+    <div class="rs-grid">
+      <section class="rs-main">
+        <div class="tabs rs-tabs" id="rs-tabs" role="tablist"></div>
+        <ol class="rs-list" id="rs-list"></ol>
+      </section>
+      <aside class="rs-side">
+        <section class="panel" id="rs-answer" hidden></section>
+        <section class="panel" id="rs-related" hidden></section>
+        <section class="panel" id="rs-elsewhere">
+          <header class="p-head"><h2>Open in</h2></header>
+          <div class="rs-else" id="rs-else"></div>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="foot"><span class="dot"></span>Avalon Search · <kbd>/</kbd> search · <kbd>J</kbd> <kbd>K</kbd> move · <kbd>Enter</kbd> open · <kbd>Esc</kbd> home</footer>
+  </main>
+
+  <script src="results.js"></script>
+</body>
+
+</html>

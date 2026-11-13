@@ -40,7 +40,9 @@ function writeCache(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } 
 /* ---------------------------------------------------------------------
    DEFAULTS
    --------------------------------------------------------------------- */
+const AV_BANG = { k: 'av', name: 'Avalon Search', url: 'results.html?q=%s' };
 const DEFAULT_BANGS = [
+  ['av', AV_BANG.name, AV_BANG.url],
   ['g', 'Google', 'https://www.google.com/search?q=%s'],
   ['d', 'DuckDuckGo', 'https://duckduckgo.com/?q=%s'],
   ['br', 'Brave Search', 'https://search.brave.com/search?q=%s'],
@@ -69,10 +71,12 @@ const DEFAULT_BANGS = [
 function defaults() {
   const L = (name, url) => ({ id: uid(), name, url });
   return {
-    v: 1,
+    v: 2,
     name: '',
     settings: {
       engines: ['g'], history: true,
+      multiMode: 'tabs',          // several engines → 'tabs' or 'avalon' (combined results page)
+      searxUrl: '', wikiLang: 'en',
       idleStartup: true, idleAfter: 0,
       units: 'C', clock24: true,
       location: { name: 'Lisbon, Portugal', lat: 38.7223, lon: -9.1393 },
@@ -140,6 +144,9 @@ function hydrate(p) {
   };
   if (p.settings?.engine && !p.settings.engines) s.settings.engines = [p.settings.engine];   // single → multi
   delete s.settings.engine;
+  // v2 added the Avalon Search page: give existing saves its bang once
+  if ((p.v || 1) < 2 && Array.isArray(s.bangs) && !s.bangs.some(b => b.k === 'av')) s.bangs = [{ ...AV_BANG }, ...s.bangs];
+  s.v = 2;
   return s;
 }
 
@@ -743,7 +750,7 @@ function engines() {
 }
 const engineNames = list => list.length === 1 ? list[0].name : list.length === 2 ? `${list[0].name} + ${list[1].name}` : `${list[0].name} +${list.length - 1}`;
 const fill = (tpl, q) => tpl.includes('%s') ? tpl.replace(/%s/g, encodeURIComponent(q)) : tpl + encodeURIComponent(q);
-const homeOf = tpl => { try { return new URL(tpl.replace(/%s/g, '')).origin; } catch { return tpl; } };
+const homeOf = tpl => { const bare = tpl.replace(/%s/g, ''); try { return new URL(bare).origin; } catch { return bare; } };   // relative (results.html) stays as is
 const isUrl = q => !/\s/.test(q) && (/^[a-z][a-z0-9+.-]*:\/\//i.test(q) || /^(localhost|\d{1,3}(\.\d{1,3}){3})(:\d+)?(\/.*)?$/i.test(q) ||
   /^[\w-]+(\.[\w-]+)*\.[a-z]{2,}(:\d+)?(\/.*)?$/i.test(q) || /^[\w-]+:\d{2,5}(\/.*)?$/.test(q));
 
@@ -793,7 +800,7 @@ function buildSugg(raw) {
   if (pb) {
     const names = pb.list.map(b => esc(b.name)).join(', '), tag = pb.list.map(b => '!' + b.k).join(' ');
     out.push(pb.q
-      ? { ic: 'search', main: `Search <em>${names}</em> for “${esc(pb.q)}”`, tag, run: nt => go(q, nt) }
+      ? { ic: 'search', main: useAvalonPage(pb.list) ? `<em>Avalon results</em> from ${names} for “${esc(pb.q)}”` : `Search <em>${names}</em> for “${esc(pb.q)}”`, tag, run: nt => go(q, nt) }
       : { ic: 'globe', main: `Open <em>${names}</em>`, tag, run: nt => go(q, nt) });
     return out;
   }
@@ -810,7 +817,9 @@ function buildSugg(raw) {
   }).filter(x => x.s).sort((a, b) => b.s - a.s).slice(0, 4);
   const linkItems = links.map(({ l }) => ({ img: favicon(l.url), ic: 'globe', main: esc(l.name), tag: host(l.url) || 'link', run: nt => openUrl(l.url, nt) }));
   const eng = engines();
-  const searchItem = { ic: 'search', main: `Search ${eng.map(b => esc(b.name)).join(', ')} for “${esc(q)}”`, tag: eng.length > 1 ? `${eng.length} tabs` : 'enter', run: nt => go(q, nt) };
+  const searchItem = useAvalonPage(eng)
+    ? { ic: 'search', main: `<em>Avalon results</em> from ${eng.map(b => esc(b.name)).join(', ')} for “${esc(q)}”`, tag: 'combined', run: nt => go(q, nt) }
+    : { ic: 'search', main: `Search ${eng.map(b => esc(b.name)).join(', ')} for “${esc(q)}”`, tag: eng.length > 1 ? `${eng.length} tabs` : 'enter', run: nt => go(q, nt) };
   // "node.js", "main.py": looks like a domain but is almost always a search
   const fileish = /^[^/:]+\.(js|ts|jsx|tsx|py|rs|go|md|json|txt|sh|exe|cpp|cs|css|html|yml|yaml|toml|lock)$/i.test(q);
   const urlItem = isUrl(q) && { ic: 'globe', main: `Go to <em>${esc(q)}</em>`, tag: 'url', run: nt => openUrl(normUrl(q), nt) };
@@ -831,8 +840,12 @@ function go(q, newTab) {
   if (S.settings.history) { S.history = [q, ...S.history.filter(h => h !== q)].slice(0, 30); save(); flush(); }
   const pb = parseBangs(q);
   const list = pb ? pb.list : engines(), query = pb ? pb.q : q;
+  if (query && useAvalonPage(list)) return openUrl(avalonUrl(query, list), newTab);
   openMany(list.map(b => ({ name: b.name, url: query ? fill(b.url, query) : homeOf(b.url) })), newTab);
 }
+/** Several engines + "Avalon page" mode → one combined results page instead of tabs. */
+const useAvalonPage = list => list.length > 1 && S.settings.multiMode === 'avalon';
+const avalonUrl = (q, list) => `results.html?q=${encodeURIComponent(q)}&e=${list.map(b => encodeURIComponent(b.k)).join(',')}`;
 
 /**
  * One target → normal navigation. Several targets:
@@ -930,9 +943,17 @@ function renderEngineRows() {
       </button>
       <button type="button" class="eng-only" title="Search with ${esc(b.name)} only">only</button>
     </li>`).join('') || '<li class="muted" style="padding:8px">No engine matches. Add one in Settings → Search.</li>';
-  const list = engines();
-  $('#engine-sel').textContent = list.length > 1 ? `${list.length} selected · Enter opens ${list.length} tabs` : `Searching with ${list[0].name}`;
+  const list = engines(), avalon = S.settings.multiMode === 'avalon';
+  $('#engine-sel').textContent = list.length < 2 ? `Searching with ${list[0].name}`
+    : avalon ? `${list.length} selected · one combined page` : `${list.length} selected · Enter opens ${list.length} tabs`;
+  $$('#engine-mode button').forEach(b => b.classList.toggle('on', b.dataset.mm === (avalon ? 'avalon' : 'tabs')));
 }
+$('#engine-mode').addEventListener('click', e => {
+  const b = e.target.closest('button[data-mm]');
+  if (!b) return;
+  S.settings.multiMode = b.dataset.mm; save();
+  renderEngineRows(); renderEngineBadge();
+});
 function openEnginePop() {
   engineFilter.value = '';
   renderEngineRows();
@@ -1370,7 +1391,7 @@ function readBangRows() {
     k: $('.bk', r).value.trim().toLowerCase().replace(/^!/, '').replace(/\s+/g, ''),
     name: $('.bn', r).value.trim(),
     url: $('.bu', r).value.trim(),
-  })).filter(b => b.k && /^https?:\/\//i.test(b.url)).map(b => ({ ...b, name: b.name || b.k }));
+  })).filter(b => b.k && (/^https?:\/\//i.test(b.url) || /^results\.html\?/i.test(b.url))).map(b => ({ ...b, name: b.name || b.k }));
 }
 
 function openSettings(tab = 'general') {
@@ -1382,6 +1403,8 @@ function openSettings(tab = 'general') {
   sf.newTab.checked = s.newTab; sf.sound.checked = s.sound; sf.effects.checked = s.effects; sf.notify.checked = s.notify;
   sf.idleStartup.checked = s.idleStartup; sf.idleAfter.value = s.idleAfter;
   sf.history.checked = s.history;
+  sf.multiMode.value = s.multiMode; sf.wikiLang.value = s.wikiLang; sf.searxUrl.value = s.searxUrl;
+  $('#searx-result').textContent = '';
   sf.ghUser.value = s.ghUser; sf.ghToken.value = s.ghToken;
   for (const k of Object.keys(SOURCES)) sf['src_' + k].checked = !!s.sources[k];
   sf.interests.value = s.interests;
@@ -1403,6 +1426,25 @@ $('#bang-add').addEventListener('click', () => {
 });
 $('#bang-table').addEventListener('click', e => { if (e.target.closest('[data-del]')) e.target.closest('.bang-row').remove(); });
 
+/** Check that the SearXNG instance answers JSON to this page (format enabled + CORS header). */
+$('#searx-test').addEventListener('click', async () => {
+  const out = $('#searx-result'), raw = sf.searxUrl.value.trim();
+  if (!raw) { out.textContent = 'Enter your SearXNG address first.'; return; }
+  const base = normUrl(raw).replace(/\/+$/, '');
+  out.textContent = 'Testing…';
+  try {
+    const res = await fetch(`${base}/search?q=avalon&format=json`, { credentials: 'omit' });
+    if (res.status === 403) { out.textContent = '✗ Reached it, but JSON is disabled: add "json" under search.formats in settings.yml.'; return; }
+    if (!res.ok) { out.textContent = `✗ It answered HTTP ${res.status}.`; return; }
+    const d = await res.json().catch(() => null);
+    if (!d || !Array.isArray(d.results)) { out.textContent = '✗ It answered, but not with SearXNG JSON. Check the URL.'; return; }
+    const engs = [...new Set(d.results.flatMap(r => r.engines || [r.engine]))].slice(0, 6).join(', ');
+    out.textContent = `✓ Connected — ${d.results.length} results${engs ? ` from ${engs}` : ''}. Press Save.`;
+  } catch {
+    out.textContent = '✗ The browser could not read it: wrong address, server down, or no Access-Control-Allow-Origin header (see README).';
+  }
+});
+
 sf.addEventListener('submit', () => {
   const s = S.settings;
   const clamp = (v, lo, hi, d) => { v = parseInt(v, 10); return isNaN(v) ? d : Math.min(hi, Math.max(lo, v)); };
@@ -1419,6 +1461,9 @@ sf.addEventListener('submit', () => {
     // keep picked engines that still exist after bang edits
     engines: s.engines.filter(k => S.bangs.some(b => b.k === k)),
     idleStartup: sf.idleStartup.checked, idleAfter: clamp(sf.idleAfter.value, 0, 240, 0),
+    multiMode: sf.multiMode.value,
+    wikiLang: (sf.wikiLang.value.trim().toLowerCase().match(/^[a-z-]{2,10}$/) || ['en'])[0],
+    searxUrl: sf.searxUrl.value.trim() ? normUrl(sf.searxUrl.value).replace(/\/+$/, '') : '',
     ghUser: sf.ghUser.value.trim().replace(/^@/, ''), ghToken: sf.ghToken.value.trim(),
     sources: Object.fromEntries(Object.keys(SOURCES).map(k => [k, sf['src_' + k].checked])),
     interests: sf.interests.value,
@@ -1477,7 +1522,7 @@ $('#import-input').addEventListener('change', async e => {
     if (!data || typeof data !== 'object' || !Array.isArray(data.groups)) throw new Error('not an Avalon backup');
     if (!confirm('Replace your current data with this backup?')) return;
     const token = S.settings.ghToken;
-    S = data.v === 1 && data.bangs ? { ...defaults(), ...data, settings: { ...defaults().settings, ...data.settings, ghToken: token } } : migrate(data);
+    S = data.v >= 1 && data.bangs ? hydrate({ ...data, settings: { ...data.settings, ghToken: token } }) : migrate(data);
     flush(); $('#settings-dlg').close(); boot(); toast('Backup restored.');
   } catch (err) { alert('Import failed: ' + err.message); }
   e.target.value = '';
@@ -1679,6 +1724,11 @@ function commands() {
     ['Calendar', 'C', () => Cal.toggle()],
     ['Write in memo', 'M', () => { reveal('memo-panel'); memo.focus({ preventScroll: true }); }],
     ['Choose search engines', '', () => openEnginePop()],
+    ['Open Avalon Search', '', () => openUrl('results.html')],
+    [`Several engines open as ${s.multiMode === 'avalon' ? 'tabs' : 'one Avalon page'}`, '', () => {
+      s.multiMode = s.multiMode === 'avalon' ? 'tabs' : 'avalon'; save(); renderEngineBadge();
+      toast(`Several engines now open as ${s.multiMode === 'avalon' ? 'one Avalon results page' : 'separate tabs'}.`);
+    }],
     ['Settings', '', () => openSettings()],
     ['Settings: search & bangs', '', () => openSettings('search')],
     ['Settings: GitHub', '', () => openSettings('github')],

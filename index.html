@@ -143,6 +143,9 @@
       <div class="engine-pop" id="engine-pop" hidden>
         <input type="text" id="engine-filter" placeholder="Filter engines…" spellcheck="false" autocomplete="off" aria-label="Filter engines">
         <ul class="eng-list" id="engine-rows"></ul>
+        <div class="eng-mode"><span>Several engines open as</span>
+          <div class="seg-tabs" id="engine-mode"><button type="button" data-mm="tabs">Tabs</button><button type="button" data-mm="avalon">Avalon page</button></div>
+        </div>
         <div class="eng-foot"><span id="engine-sel"></span><button type="button" class="btn btn-sm" id="engine-done">Done</button></div>
         <p class="eng-hint">Click engines to add or remove them · <b>only</b> uses just that one</p>
       </div>
@@ -370,6 +373,20 @@
         <div class="bang-table" id="bang-table"></div>
         <button type="button" class="btn btn-sm" id="bang-add"><svg class="ic"><use href="#i-plus" /></svg>Add bang</button>
         <label class="check mt"><input type="checkbox" name="history"> Remember recent searches</label>
+
+        <h3 class="sub-h">Avalon Search (combined results)</h3>
+        <div class="set-grid">
+          <label class="field"><span>Several engines open as</span>
+            <select name="multiMode"><option value="tabs">Separate tabs</option><option value="avalon">One Avalon results page</option></select></label>
+          <label class="field"><span>Wikipedia language</span><input name="wikiLang" maxlength="10" placeholder="en" spellcheck="false"></label>
+          <div class="field span2"><span>SearXNG URL (optional — adds Google, Bing, Brave…)</span>
+            <div class="row"><input name="searxUrl" placeholder="http://192.168.1.10:8888" spellcheck="false" autocomplete="off">
+              <button type="button" class="btn" id="searx-test">Test</button></div>
+            <small class="muted" id="searx-result"></small>
+          </div>
+        </div>
+        <p class="muted">Without SearXNG, results come from Marginalia, DuckDuckGo answers, Wikipedia, Stack Overflow, Hacker News, Lemmy, GitHub and npm.
+          SearXNG needs <code>json</code> in <code>search.formats</code> and an <code>Access-Control-Allow-Origin</code> header (see the README).</p>
       </div>
 
       <div class="set-page" data-page="github" hidden>
