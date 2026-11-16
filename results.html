@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-app="search">
 
 <head>
   <meta charset="UTF-8">
@@ -12,6 +12,33 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="os/os.css">
+  <!-- Arriving from another Avalon app: show the hand-over card before first paint (see os/os.js). -->
+  <script>
+    (function () {
+      // the link may carry "#~os:<from>~cfg:<settings>~save:<payload>" (see os/os.js)
+      var r = document.documentElement, app = r.dataset.app, from = null, extra = {};
+      if (/^#~/.test(location.hash)) {
+        location.hash.replace(/~([a-z]+):([^~]*)/g, function (_, k, v) { extra[k] = v; return ''; });
+        history.replaceState(history.state, '', location.pathname + location.search);
+        if ('os' in extra) from = extra.os;
+        if (extra.cfg) try {
+          var json = decodeURIComponent(escape(atob(extra.cfg.replace(/-/g, '+').replace(/_/g, '/'))));
+          localStorage.setItem('avalon_shared_cfg', JSON.stringify({ at: Date.now(), cfg: JSON.parse(json) }));
+        } catch (e) { }
+      }
+      window.AvalonArrival = { from: from, extra: extra };
+      try {
+        var n = JSON.parse(localStorage.getItem('avalon_os_nav') || 'null');
+        localStorage.removeItem('avalon_os_nav');
+        if (from === null && n && n.to === app && Date.now() - n.at < 6000) from = n.from || '';
+      } catch (e) { }
+      if (from !== null && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        r.classList.add('os-arrive'); r.dataset.osFrom = from;
+        r.dataset.osLabel = { home: 'Home', search: 'Search', research: 'Research' }[app] || '';
+      }
+    })();
+  </script>
 </head>
 
 <body class="rs-page">
@@ -38,9 +65,13 @@
       </svg>
       <span class="os-name">Avalon</span><span class="os-ver">Search</span>
     </a>
+    <nav class="os-apps" aria-label="Avalon apps">
+      <a class="os-app" href="index.html" title="Home (G then H)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></svg><span>Home</span></a>
+      <a class="os-app on" aria-current="page" href="results.html" title="Search (G then S)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg><span>Search</span></a>
+      <a class="os-app" href="research.html" title="Research (G then R)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M4.27 21a2 2 0 0 0 1.73 1h12a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3" /><path d="m9 18-1.5-1.5" /><circle cx="5" cy="14" r="3" /></svg><span>Research</span></a>
+    </nav>
     <div class="os-tray">
       <span class="tray rs-stat" id="rs-stat"></span>
-      <a class="icon-btn sm" href="index.html" title="Home"><svg class="ic"><use href="#i-home" /></svg></a>
     </div>
   </header>
 
@@ -60,6 +91,7 @@
         <ol class="rs-list" id="rs-list"></ol>
       </section>
       <aside class="rs-side">
+        <section class="panel rs-agent" id="rs-agent"></section>
         <section class="panel" id="rs-answer" hidden></section>
         <section class="panel" id="rs-related" hidden></section>
         <section class="panel" id="rs-elsewhere">
@@ -72,6 +104,9 @@
     <footer class="foot"><span class="dot"></span>Avalon Search · <kbd>/</kbd> search · <kbd>J</kbd> <kbd>K</kbd> move · <kbd>Enter</kbd> open · <kbd>Esc</kbd> home</footer>
   </main>
 
+  <script src="os/os.js"></script>
+  <script src="os/investigator.js"></script>
+  <script src="search-core.js"></script>
   <script src="results.js"></script>
 </body>
 

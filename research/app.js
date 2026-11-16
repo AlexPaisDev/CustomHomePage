@@ -22,7 +22,37 @@ R.SECTIONS = [
   { k: 'timeline', label: 'Timeline', icon: 'timeline', phase: 5 },
   { k: 'tasks', label: 'Tasks', icon: 'list', phase: 6 },
 ];
-const BUILT = new Set(['overview', 'sources']);
+const BUILT = new Set(['overview', 'search', 'sources']);
+
+/* ---------- the investigator (os/investigator.js) narrates what happens ---------- */
+R.agent = (() => {
+  const d = window.AvalonInvestigator?.desk($('#rx-agent'), { text: 'Ready when you are.' });
+  if (!d) return { event() { }, next: null };
+  const q = t => `“${String(t || 'Untitled').length > 46 ? String(t).slice(0, 45) + '…' : t || 'Untitled'}”`;
+  const EV = {
+    home: n => ['idle', n ? `${plural(n, 'case')} on file. Pick one, or press N to open another.` : 'No cases yet. Press N to open one.'],
+    open: inv => ['wave', `On the case: ${q(inv.title)}. ${S.sources.length ? `${plural(S.sources.length, 'source')} on file.` : 'No sources yet. Press A to add one.'}`],
+    created: inv => ['found', `New case opened: ${q(inv.title)}. Add a first source with A.`],
+    deleted: () => ['think', 'Case removed from the files.'],
+    filed: src => ['write', `Filed ${q(src.title || src.url)}.`],
+    dup: src => ['found', `Already on file: ${q(src.title || src.url)}.`, 'warn'],
+    elsewhere: inv => ['think', `I have seen this link before, in ${q(inv.title)}.`],
+    quote: () => ['write', 'Quote noted in the margin.'],
+    unfiled: () => ['think', 'Source removed.'],
+    cite: n => ['write', `References ready: ${plural(n, 'source')}.`],
+  };
+  return {
+    desk: d,
+    next: null,                       // an event to tell instead of the next route's default line
+    event(kind, arg) {
+      const e = EV[kind]?.(arg);
+      if (!e) return;
+      d.do(e[0]);
+      if (e[2]) d.mood(e[2], 5000);
+      d.say(e[1]);
+    },
+  };
+})();
 
 const rx = $('#rx'), main = $('#rx-main');
 const narrowSide = matchMedia('(max-width: 760px)');
@@ -31,6 +61,13 @@ const narrowPanel = matchMedia('(max-width: 1100px)');
 /* ---------- routing ---------- */
 R.route = { view: 'home', inv: null, section: null };
 R.go = hash => { if (location.hash !== hash) location.hash = hash; else route(); };
+const routeWaiters = [];
+/** Navigate and resolve once that screen has rendered. */
+R.goAndWait = (hash, { replace = false } = {}) => new Promise(res => {
+  routeWaiters.push(res);
+  if (replace) { history.replaceState(null, '', hash); route(); }   // no new history entry (keeps Back pointing where you came from)
+  else R.go(hash);
+});
 R.invHash = (id, section = 'overview') => `#/inv/${id}/${section}`;
 
 let routeRun = 0;
@@ -50,10 +87,19 @@ async function route() {
     if (S.inv) { R.panel.close(); S.inv = null; }
     R.route = { view: 'home', inv: null, section: null };
   }
+  const prevInv = lastInv, first = !routed;
+  lastInv = R.route.inv; routed = true;
   renderSide();
+  enter = true;
   renderMain();
   main.scrollTop = 0;
+  // the investigator's line for this screen
+  if (R.agent.next) { R.agent.event(...R.agent.next); R.agent.next = null; }
+  else if (!R.route.inv) { if (prevInv || first) R.agent.event('home', S.invs.length); }
+  else if (R.route.inv !== prevInv) R.agent.event('open', S.inv);
+  routeWaiters.splice(0).forEach(f => f());
 }
+let lastInv = null, routed = false, enter = false;
 window.addEventListener('hashchange', route);
 
 /* ---------- main view ---------- */
@@ -62,7 +108,8 @@ function renderMain() {
   document.title = S.inv ? `${S.inv.title} · Research` : 'Avalon Research';
   // each render gets a fresh element, so listeners a view adds die with it
   const el = document.createElement('div');
-  el.className = `rx-view rx-v-${v}`;
+  el.className = `rx-view rx-v-${v}${enter ? ' rx-enter' : ''}`;   // only navigation animates, not data refreshes
+  enter = false;
   main.replaceChildren(el);
   if (v !== 'home' && !BUILT.has(v)) return renderSoon(el, v);
   R.views[v].render(el);
@@ -130,6 +177,7 @@ R.panel = (() => {
   return {
     get key() { return key; },
     open(k, fn) {
+      if (k !== key) { body.classList.remove('rx-pane-in'); void body.offsetWidth; body.classList.add('rx-pane-in'); }
       key = k; draw = fn;
       rx.classList.remove('no-panel');
       if (narrowPanel.matches) { rx.classList.add('panel-open'); showScrim(); }
@@ -221,7 +269,7 @@ invForm.addEventListener('submit', async e => {
   if (!data.title) return invForm.title.focus();
   invDlg.close();
   if (editingInv) { await R.store.updateInv(editingInv.id, data); toast('Investigation updated.'); }
-  else { const inv = await R.store.createInv(data); R.go(R.invHash(inv.id)); toast(`Created <b>${esc(inv.title)}</b>.`); }
+  else { const inv = await R.store.createInv(data); R.agent.next = ['created', inv]; R.go(R.invHash(inv.id)); toast(`Created <b>${esc(inv.title)}</b>.`); }
 });
 R.deleteInv = async inv => {
   const n = await R.db.count('sources', 'investigationId', inv.id);
@@ -230,6 +278,7 @@ R.deleteInv = async inv => {
     text: `This removes the investigation${n ? ` and its ${plural(n, 'source')}, highlights and uploaded files` : ''}. It can't be undone.`,
   });
   if (!ok) return;
+  R.agent.next = ['deleted'];
   await R.store.deleteInv(inv.id);
   toast('Investigation deleted.');
   R.go('#/');
@@ -280,6 +329,8 @@ document.addEventListener('keydown', e => {
     '[': toggleSide,
     ']': togglePanel,
     '?': () => $('#help-dlg').showModal(),
+    s: () => R.views[R.route.view]?.save?.(),
+    o: () => R.views[R.route.view]?.open?.(),
     j: () => R.views[R.route.view]?.step?.(1),
     k: () => R.views[R.route.view]?.step?.(-1),
   }[e.key.toLowerCase()];
@@ -295,6 +346,7 @@ $('#rx-help-btn').addEventListener('click', () => $('#help-dlg').showModal());
   renderFoot();
   if (!location.hash && R.ui.last && S.invs.some(i => i.id === R.ui.last)) history.replaceState(null, '', R.invHash(R.ui.last));
   await route();
+  R.incoming.check();                  // a result handed over from Avalon Search
 })().catch(err => {
   console.error(err);
   main.innerHTML = `<div class="rx-soon">${icon('alert')}<h1>Research couldn't start</h1><p>${esc(err.message || err)}</p></div>`;

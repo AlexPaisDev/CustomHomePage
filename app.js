@@ -642,8 +642,13 @@ function findLink(id) {
   for (const g of S.groups) { const i = g.links.findIndex(l => l.id === id); if (i > -1) return { g, i, l: g.links[i] }; }
   return null;
 }
+// settings the other Avalon apps need (each app has its own storage on file://); never the GitHub token
+if (window.AvalonOS) AvalonOS.config = () => ({ searxUrl: S.settings.searxUrl, wikiLang: S.settings.wikiLang, newTab: S.settings.newTab, bangs: S.bangs });
+
 function openUrl(url, newTab = S.settings.newTab) {
-  if (newTab) window.open(url, '_blank', 'noopener'); else location.href = url;
+  if (newTab) window.open(window.AvalonOS?.appOf(url) ? AvalonOS.linkTo(url) : url, '_blank', 'noopener');
+  else if (window.AvalonOS) AvalonOS.go(url);     // other Avalon apps get the animated hand-over
+  else location.href = url;
 }
 
 $('#groups').addEventListener('click', e => {
@@ -1942,7 +1947,17 @@ setInterval(tick, 1000);
 setInterval(() => Idle.check(), 15e3);
 const coldStart = S.settings.idleStartup && Date.now() - prevAlive > 3 * 60e3;
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (location.hash === '#idle' || coldStart || S.settings.onOpen === 'lock') Idle.show();
+const viaOs = document.documentElement.classList.contains('os-arrive');
+if (viaOs) {
+  // coming back from Search or Research: the OS hand-over plays instead of the intro,
+  // and the dashboard settles in as its curtain lifts
+  document.addEventListener('avalon:arrive', () => {
+    document.body.classList.add('entering');
+    setTimeout(() => document.body.classList.remove('entering'), 1500);
+  }, { once: true });
+  if (!location.hash) setTimeout(() => cmdInput.focus({ preventScroll: true }), 50);
+}
+else if (location.hash === '#idle' || coldStart || S.settings.onOpen === 'lock') Idle.show();
 else if (S.settings.onOpen === 'intro' && !calm) Idle.show(true);
 else {
   document.documentElement.classList.remove('av-boot');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-app="home">
 
 <head>
   <meta charset="UTF-8">
@@ -14,13 +14,43 @@
   <!-- only the five katakana glyphs of the brand name -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&text=%E3%82%A2%E3%83%B4%E3%82%A1%E3%83%AD%E3%83%B3&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="os/os.css">
+  <!-- Arriving from another Avalon app: show the hand-over card before first paint (see os/os.js). -->
+  <script>
+    (function () {
+      // the link may carry "#~os:<from>~cfg:<settings>~save:<payload>" (see os/os.js)
+      var r = document.documentElement, app = r.dataset.app, from = null, extra = {};
+      if (/^#~/.test(location.hash)) {
+        location.hash.replace(/~([a-z]+):([^~]*)/g, function (_, k, v) { extra[k] = v; return ''; });
+        history.replaceState(history.state, '', location.pathname + location.search);
+        if ('os' in extra) from = extra.os;
+        if (extra.cfg) try {
+          var json = decodeURIComponent(escape(atob(extra.cfg.replace(/-/g, '+').replace(/_/g, '/'))));
+          localStorage.setItem('avalon_shared_cfg', JSON.stringify({ at: Date.now(), cfg: JSON.parse(json) }));
+        } catch (e) { }
+      }
+      window.AvalonArrival = { from: from, extra: extra };
+      try {
+        var n = JSON.parse(localStorage.getItem('avalon_os_nav') || 'null');
+        localStorage.removeItem('avalon_os_nav');
+        if (from === null && n && n.to === app && Date.now() - n.at < 6000) from = n.from || '';
+      } catch (e) { }
+      if (from !== null && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        r.classList.add('os-arrive'); r.dataset.osFrom = from;
+        r.dataset.osLabel = { home: 'Home', search: 'Search', research: 'Research' }[app] || '';
+      }
+    })();
+  </script>
   <!-- Hide the dashboard before first paint when the intro or lock screen is about to play (see BOOT in app.js). -->
   <script>
+    (function () {
     try {
       var o = (JSON.parse(localStorage.getItem('avalon_home_v1') || '{}').settings) || {};
       var cold = o.idleStartup !== false && Date.now() - (+localStorage.getItem('avalon_alive') || 0) > 180000;
-      if (location.hash === '#idle' || cold || (o.onOpen || 'intro') !== 'none') document.documentElement.classList.add('av-boot');
+      var viaOs = document.documentElement.classList.contains('os-arrive');   // the hand-over card replaces the intro
+      if (!viaOs && (location.hash === '#idle' || cold || (o.onOpen || 'intro') !== 'none')) document.documentElement.classList.add('av-boot');
     } catch (e) { }
+    })();
   </script>
 </head>
 
@@ -83,13 +113,17 @@
       </svg>
       <span class="os-name">Avalon</span><span class="os-ver">OS</span>
     </div>
+    <nav class="os-apps" aria-label="Avalon apps">
+      <a class="os-app on" aria-current="page" href="index.html" title="Home (G then H)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></svg><span>Home</span></a>
+      <a class="os-app" href="results.html" title="Search (G then S)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg><span>Search</span></a>
+      <a class="os-app" href="research.html" title="Research (G then R)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M4.27 21a2 2 0 0 0 1.73 1h12a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3" /><path d="m9 18-1.5-1.5" /><circle cx="5" cy="14" r="3" /></svg><span>Research</span></a>
+    </nav>
     <div class="os-tray">
       <button class="tray" id="tray-net" title="Home network (Sentinel)"><span class="led"></span><span id="tray-net-txt">Home</span></button>
       <button class="tray" id="tray-gh" title="GitHub notifications" hidden><svg class="ic"><use href="#i-github" /></svg><span id="tray-gh-n">0</span></button>
       <button class="tray" id="tray-focus" title="Focus timer — click to pause" hidden><svg class="ic"><use href="#i-clock" /></svg><span id="tray-focus-t">25:00</span></button>
       <button id="weather" class="tray weather" title="Weather — click to refresh"><svg class="ic"><use href="#i-cloud" /></svg><span>—</span></button>
       <span class="tray-sep" aria-hidden="true"></span>
-      <a class="icon-btn sm" id="btn-research" href="research.html" title="Research workspace"><svg class="ic"><use href="#i-research" /></svg></a>
       <button class="icon-btn sm" id="btn-idle" title="Lock screen (I)"><svg class="ic"><use href="#i-moon" /></svg></button>
       <button class="icon-btn sm" id="btn-help" title="Shortcuts (?)"><svg class="ic"><use href="#i-keyboard" /></svg></button>
       <button class="icon-btn sm" id="btn-settings" title="Settings"><svg class="ic"><use href="#i-sliders" /></svg></button>
@@ -470,6 +504,7 @@
     </div>
   </dialog>
 
+  <script src="os/os.js"></script>
   <script src="app.js"></script>
 </body>
 

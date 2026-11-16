@@ -756,3 +756,12 @@ body.entering .foot { animation: enter .6s ease .5s both; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Avalon Search: the investigator panel */
+.rs-agent { padding: 12px 14px; }
+
+/* Avalon Search: hand a result to Research */
+.rs-save { margin-left: auto; height: 22px; padding: 0 9px; border-radius: 6px; border: 1px solid var(--line-2); font: 600 10px/1 var(--f-mono); letter-spacing: .06em; color: var(--text-3); opacity: 0; transition: opacity .15s, color .15s, border-color .15s; }
+.rs-item:hover .rs-save, .rs-item.sel .rs-save, .rs-save:focus-visible { opacity: 1; }
+.rs-save:hover { color: var(--gold-l); border-color: var(--gold-d); }
+@media (hover: none) { .rs-save { opacity: 1; } }

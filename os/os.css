@@ -1,0 +1,130 @@
+/* =====================================================================
+   AVALON OS LAYER — shared by every Avalon page (home, Search, Research)
+   App switcher in the system bar, the transition between apps, dialog
+   motion. Pages opt in with <html data-app="…"> and os/os.js.
+   ===================================================================== */
+
+/* ---------- app switcher ---------- */
+.os-apps {
+  --w: 92px; --i: 0;
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: flex; gap: 2px; padding: 3px; border-radius: 10px;
+  background: rgba(10, 11, 32, .72); border: 1px solid rgba(61, 58, 102, .7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+.os-apps::before {
+  content: ''; position: absolute; top: 3px; left: 3px; width: var(--w); height: calc(100% - 6px); border-radius: 7px;
+  background: linear-gradient(180deg, rgba(230, 189, 78, .24), rgba(230, 189, 78, .07));
+  box-shadow: inset 0 0 0 1px rgba(230, 189, 78, .5), 0 0 16px rgba(230, 189, 78, .16);
+  transform: translateX(calc(var(--i) * (var(--w) + 2px)));
+  transition: transform .34s cubic-bezier(.3, .9, .25, 1.12);
+}
+.os-app {
+  position: relative; z-index: 1; width: var(--w); height: 26px;
+  display: flex; align-items: center; justify-content: center; gap: 7px; border-radius: 7px;
+  font: 600 10.5px/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-3); text-decoration: none; transition: color .2s;
+}
+.os-app:hover { color: var(--text); }
+.os-app.on { color: var(--gold-l); }
+.os-app .ic { width: 14px; height: 14px; }
+@media (max-width: 1180px) {
+  .os-apps { --w: 34px; }
+  .os-app span { display: none; }
+}
+@media (max-width: 900px) {
+  .os-apps { position: static; transform: none; margin: 0 auto 0 4px; }
+}
+@media (max-width: 420px) {
+  .os-apps { --w: 30px; }
+}
+
+/* ---------- moving between apps ----------
+   Leaving (os.js adds .os-curtain): the page sinks back and the Avalon mark
+   assembles like the lock-screen intro: triangles fly in, cyan dots pop,
+   the app name spreads out, a gold line draws.
+   Arriving: the inline head script puts the *finished* frame up before the
+   first paint (pseudo-elements below, same geometry as the curtain), then
+   it dissolves into the new page. Keep the two in step:
+     mark   150px wide, centred at 50% / 50% - 24px
+     label  centred at 50% + 56px (padding-top 112px)
+     line   180px, at 50% + 80px */
+.os-curtain, html.os-arrive::before {
+  position: fixed; inset: 0; z-index: 2147483000;
+  background:
+    radial-gradient(640px 440px at 50% 46%, rgba(230, 189, 78, .11), transparent 70%),
+    repeating-linear-gradient(-18deg, transparent 0 260px, rgba(150, 140, 255, .045) 260px 261px, transparent 261px 520px),
+    linear-gradient(170deg, #090b24 0%, #11123a 50%, #1b1742 100%);
+}
+.os-curtain { animation: os-in .34s ease both; }
+.os-curtain svg { position: absolute; left: 50%; top: calc(50% - 24px); width: 150px; height: auto; transform: translate(-50%, -50%); overflow: visible; filter: drop-shadow(0 8px 26px rgba(0, 0, 0, .5)); }
+.os-curtain svg path, .os-curtain svg circle { transform-box: fill-box; transform-origin: center; }
+.os-curtain .t1 { animation: os-tl .55s cubic-bezier(.2, .9, .3, 1.15) .1s both; }
+.os-curtain .t2 { animation: os-td .58s cubic-bezier(.2, .9, .3, 1.1) .17s both; }
+.os-curtain .t3 { animation: os-tr .55s cubic-bezier(.2, .9, .3, 1.15) .24s both; }
+.os-curtain .d1 { animation: os-dot .28s ease-out .5s both; }
+.os-curtain .d2 { animation: os-dot .28s ease-out .56s both; }
+.os-curtain .d3 { animation: os-dot .28s ease-out .62s both; }
+.os-curtain-label, html.os-arrive::after {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 112px 0 0 .5em; pointer-events: none;
+  font: 700 12px/1 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace; letter-spacing: .5em; text-transform: uppercase; color: #f7dc84;
+  text-shadow: 0 0 18px rgba(230, 189, 78, .35);
+}
+.os-curtain-label { animation: os-track .45s cubic-bezier(.2, .8, .3, 1) .42s both; }
+.os-curtain-line { position: absolute; left: calc(50% - 90px); top: calc(50% + 80px); width: 180px; height: 1px; background: linear-gradient(90deg, transparent, #e6bd4e, transparent); animation: os-grow .4s cubic-bezier(.3, .8, .3, 1) .52s both; }
+
+/* the page being left sinks back under the curtain */
+html.os-leave body > :not(dialog):not(.os-curtain) { transition: transform .5s cubic-bezier(.4, 0, .2, 1), filter .5s ease, opacity .5s ease; transform: scale(.965); filter: blur(4px); opacity: .55; }
+
+/* arriving: the finished frame, painted before the page itself */
+html.os-arrive::before { content: ''; pointer-events: none; }
+html.os-arrive::after {
+  content: attr(data-os-label); z-index: 2147483001;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 108'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f7dc84'/%3E%3Cstop offset='.55' stop-color='%23e6bd4e'/%3E%3Cstop offset='1' stop-color='%23b2892c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='url(%23g)'%3E%3Cpath d='M0 108 58 0l58 108z'/%3E%3Cpath d='M66 0h118l-59 108z'/%3E%3Cpath d='M134 108 192 0l58 108z'/%3E%3C/g%3E%3Cg fill='%2362e6f0'%3E%3Ccircle cx='58' cy='72' r='7'/%3E%3Ccircle cx='125' cy='36' r='7'/%3E%3Ccircle cx='192' cy='72' r='7'/%3E%3C/g%3E%3C/svg%3E") center calc(50% - 24px) / 150px auto no-repeat,
+    linear-gradient(90deg, transparent, #e6bd4e, transparent) center calc(50% + 80px) / 180px 1px no-repeat;
+}
+/* failsafe if the page script never runs */
+html.os-arrive::before, html.os-arrive::after { animation: os-out .4s ease 3s forwards; }
+/* the mark drifts towards you and fades, then the night lifts off the page */
+html.os-arrive.os-arrived::after { animation: os-zoom .55s cubic-bezier(.5, 0, .75, 0) forwards; }
+html.os-arrive.os-arrived::before { animation: os-out .6s cubic-bezier(.4, 0, .2, 1) .14s forwards; }
+
+body.os-enter .osbar { animation: os-bar .6s cubic-bezier(.2, .8, .3, 1) .18s both; }
+html:not([data-app="home"]) body.os-enter > main,
+html:not([data-app="home"]) body.os-enter > .rx { animation: os-rise .75s cubic-bezier(.2, .8, .3, 1) .24s both; }
+
+@keyframes os-in { from { opacity: 0; } }
+@keyframes os-out { to { opacity: 0; visibility: hidden; } }
+@keyframes os-zoom { to { opacity: 0; transform: scale(1.14); filter: blur(3px); } }
+@keyframes os-tl { from { opacity: 0; transform: translate(-180px, 60px) rotate(-25deg) scale(.6); } 60% { opacity: 1; } }
+@keyframes os-tr { from { opacity: 0; transform: translate(180px, 60px) rotate(25deg) scale(.6); } 60% { opacity: 1; } }
+@keyframes os-td { from { opacity: 0; transform: translateY(-170px) rotate(-180deg) scale(.4); } 60% { opacity: 1; } }
+@keyframes os-dot { 0% { opacity: 0; transform: scale(0); } 60% { opacity: 1; transform: scale(1.8); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes os-track { from { opacity: 0; letter-spacing: .05em; } }
+@keyframes os-grow { from { transform: scaleX(0); } }
+@keyframes os-bar { from { opacity: 0; transform: translateY(-100%); } }
+@keyframes os-rise { from { opacity: 0; transform: translateY(16px) scale(.985); } }
+
+/* ---------- dialogs open with a little lift ---------- */
+dialog[open] { animation: os-dlg .2s cubic-bezier(.2, .8, .3, 1); }
+dialog[open]::backdrop { animation: os-in .2s ease; }
+@keyframes os-dlg { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .os-curtain, html.os-arrive::before, html.os-arrive::after { display: none; }
+}
+.os-apps.os-still::before { transition: none; }
+
+/* ---------- the investigator (os/investigator.js) ---------- */
+.inv-desk { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.inv-cv { width: 80px; height: 56px; flex: none; image-rendering: pixelated; cursor: pointer; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .45)); }
+.inv-txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.inv-name { font: 700 9.5px/1 var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--gold-l); }
+.inv-say { font-size: 12.5px; line-height: 1.4; color: var(--text-2); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.inv-say.typing::after { content: '▍'; color: var(--gold); animation: inv-caret .8s steps(1) infinite; }
+@keyframes inv-caret { 50% { opacity: 0; } }
+.inv-lg { flex-direction: column; text-align: center; gap: 12px; }
+.inv-lg .inv-cv { width: 160px; height: 112px; }
+.inv-lg .inv-txt { align-items: center; }
+.inv-lg .inv-say { font-size: 14px; }

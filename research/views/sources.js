@@ -193,6 +193,7 @@ R.views.sources = (() => {
         </label>
         <div class="rx-dup" id="pane-dup" hidden></div>`}
         ${s.origin === 'text' ? `<label class="field"><span>Text</span><textarea name="text" rows="7">${esc(s.text)}</textarea></label>` : ''}
+        ${s.snippet ? `<div class="rx-snippet"><span>From search${s.searchQuery ? ` for “${esc(s.searchQuery)}”` : ''}</span><p>${esc(s.snippet)}</p></div>` : ''}
         <div class="rx-pane-grid">
           <label class="field"><span>Type</span><select name="type">${Object.entries(R.SOURCE_TYPES).map(([k, x]) => `<option value="${k}" ${k === s.type ? 'selected' : ''}>${x.label}</option>`).join('')}</select></label>
           <label class="field"><span>Reliability</span><select name="reliability">${R.RELIABILITY.map((l, n) => `<option value="${n}" ${n === s.reliability ? 'selected' : ''}>${n ? `${n} · ` : ''}${l}</option>`).join('')}</select></label>
@@ -265,6 +266,7 @@ R.views.sources = (() => {
       await commit.flush();
       await R.store.addHighlight(id, { quote, note: fm.note.value.trim(), location: fm.location.value.trim() });
       toast('Highlight saved.');
+      R.agent.event('quote');
       R.panel.refresh();
       $('#hl-form textarea', body)?.focus();
     });
@@ -274,7 +276,7 @@ R.views.sources = (() => {
       if (act === 'delete') {
         const n = hls.length;
         if (await ask({ title: 'Delete this source?', text: `${esc(label(s))}${n ? ` and its ${plural(n, 'highlight')}` : ''} will be removed. This can't be undone.` })) {
-          R.panel.close(); await R.store.deleteSource(id); toast('Source deleted.');
+          R.panel.close(); await R.store.deleteSource(id); toast('Source deleted.'); R.agent.event('unfiled');
         }
         return;
       }
@@ -313,6 +315,10 @@ R.views.sources = (() => {
     if (elsewhere.length) parts.push(`<p>${icon('link')}Also in ${elsewhere.slice(0, 3).map(x => `<a href="${R.invHash(x.inv.id, 'sources')}">${esc(x.inv.title)}</a>`).join(', ')}${elsewhere.length > 3 ? ` and ${elsewhere.length - 3} more` : ''}.</p>`);
     box.innerHTML = parts.join('');
     box.hidden = !parts.length;
+    // in the add dialog, the investigator speaks up the first time a match appears
+    const seen = here ? `h:${here.id}` : elsewhere.length ? `e:${elsewhere[0].source.id}` : '';
+    if (box.id === 'src-dup' && seen && seen !== box.dataset.seen) R.agent.event(here ? 'dup' : 'elsewhere', here || elsewhere[0].inv);
+    box.dataset.seen = seen;
     box.dataset.dup = here ? here.id : '';
     $('[data-goto]', box)?.addEventListener('click', e => { $('#src-dlg').open && $('#src-dlg').close(); select(e.target.dataset.goto); });
   }
@@ -349,6 +355,7 @@ R.views.sources = (() => {
     setFile(null);
     setKind(prefill.kind || 'url');
     $('#src-dup').hidden = true;
+    $('#src-dup').dataset.seen = '';
     if (prefill.url) { form.url.value = prefill.url; checkDup(prefill.url, $('#src-dup')); }
     dlg.showModal();
     (kind === 'url' ? form.url : form.title).focus();
@@ -382,7 +389,7 @@ R.views.sources = (() => {
         if (url && !/^[a-z]+:\/\//i.test(url)) url = `https://${url}`;
         if (!/^https?:\/\/[^\s/]+\.[^\s]+/i.test(url)) { form.url.focus(); return fail('Enter a web address, like https://example.com/page.'); }
         const { here } = await R.store.findUrl(url);
-        if (here) { dlg.close(); select(here.id); return toast('That link is already a source here, so it was opened instead.'); }
+        if (here) { dlg.close(); select(here.id); R.agent.event('dup', here); return toast('That link is already a source here, so it was opened instead.'); }
         data.url = url;
         if (!data.title) data.title = titleFromUrl(url);
         if (!data.publisher) data.publisher = host(url);
@@ -401,6 +408,7 @@ R.views.sources = (() => {
       const src = await R.store.addSource(data);
       dlg.close();
       toast(`Saved <b>${esc(label(src))}</b>.`);
+      R.agent.event('filed', src);
       if (R.route.view !== 'sources') R.go(R.invHash(S.inv.id, 'sources'));
       select(src.id);
     } catch (err) {

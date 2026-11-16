@@ -82,8 +82,10 @@ R.cite = (() => {
     fmt = R.ui.citeFmt = b.dataset.f; R.saveUi(); draw();
   });
   $('#cite-filtered').addEventListener('change', draw);
-  $('#cite-copy').addEventListener('click', async () => { if (await copyText($('#cite-out').value)) toast('Citations copied.'); });
+  const count = () => ($('#cite-filtered').checked ? R.visibleSources() : S.sources).length;
+  $('#cite-copy').addEventListener('click', async () => { if (await copyText($('#cite-out').value)) { toast('Citations copied.'); R.agent.event('cite', count()); } });
   $('#cite-dl').addEventListener('click', () => {
+    R.agent.event('cite', count());
     const ext = fmt === 'md' ? 'md' : 'txt';
     download(`${slug(S.inv.title)}-sources${fmt === 'md' ? '' : `-${fmt}`}.${ext}`, $('#cite-out').value, fmt === 'md' ? 'text/markdown' : 'text/plain');
   });

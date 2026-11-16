@@ -62,7 +62,7 @@ R.views.home = (() => {
     if (!S.invs.length) {
       el.innerHTML = `
         <div class="rx-welcome">
-          ${icon('research')}
+          <div class="rx-welcome-agent"></div>
           <h1>Research</h1>
           <p>A workspace for digging into a company, a person or a topic, and keeping what you find: sources, highlights,
           and soon a board, entities, findings and a timeline.</p>
@@ -70,6 +70,8 @@ R.views.home = (() => {
           <p class="muted">Everything stays in this browser. Nothing is sent anywhere unless you search.</p>
         </div>`;
       $('[data-act="new"]', el).addEventListener('click', () => R.editInv());
+      const big = window.AvalonInvestigator?.desk($('.rx-welcome-agent', el), { size: 'lg', text: 'Ready for the first case.' });
+      big?.do('wave');
       return;
     }
     const o = f(), tags = R.allTags();
