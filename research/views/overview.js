@@ -29,6 +29,7 @@ R.views.overview = (() => {
         </div>
         <div class="p-actions">
           <select class="rx-status-sel" aria-label="Status">${Object.entries(R.STATUS).map(([k, s]) => `<option value="${k}" ${k === i.status ? 'selected' : ''}>${s.label}</option>`).join('')}</select>
+          <button class="btn btn-sm" data-act="export" title="Report, PDF, backup (X)">${icon('download')}Export</button>
           <button class="btn btn-sm" data-act="edit">${icon('edit')}Edit</button>
           <button class="icon-btn sm bordered" data-act="delete" title="Delete investigation" aria-label="Delete investigation">${icon('trash')}</button>
         </div>
@@ -66,6 +67,7 @@ R.views.overview = (() => {
     el.addEventListener('click', e => {
       const act = e.target.closest('[data-act]')?.dataset.act;
       if (act === 'edit') R.editInv(i);
+      if (act === 'export') R.exporter.open();
       if (act === 'delete') R.deleteInv(i);
       if (act === 'add') R.views.sources.add();
       const src = e.target.closest('[data-src]');

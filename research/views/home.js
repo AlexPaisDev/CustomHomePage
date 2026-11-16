@@ -67,9 +67,10 @@ R.views.home = (() => {
           <p>A workspace for digging into a company, a person or a topic, and keeping what you find: sources, highlights,
           and soon a board, entities, findings and a timeline.</p>
           <button class="btn btn-gold" data-act="new">${icon('plus')}Start an investigation</button>
-          <p class="muted">Everything stays in this browser. Nothing is sent anywhere unless you search.</p>
+          <p class="muted">Everything stays in this browser. Nothing is sent anywhere unless you search. Have a backup? <button class="link-btn" data-act="import">Import it</button>.</p>
         </div>`;
       $('[data-act="new"]', el).addEventListener('click', () => R.editInv());
+      $('[data-act="import"]', el).addEventListener('click', () => R.exporter.pickImport());
       const big = window.AvalonInvestigator?.desk($('.rx-welcome-agent', el), { size: 'lg', text: 'Ready for the first case.' });
       big?.do('wave');
       return;
@@ -79,7 +80,7 @@ R.views.home = (() => {
     el.innerHTML = `
       <header class="rx-head">
         <div><p class="rx-kicker">${icon('research')}Avalon Research</p><h1 class="rx-title">Investigations</h1></div>
-        <div class="p-actions"><span class="p-meta" id="rx-home-n"></span><button class="btn btn-gold" data-act="new">${icon('plus')}New</button></div>
+        <div class="p-actions"><span class="p-meta" id="rx-home-n"></span><button class="btn" data-act="import" title="Import a backup (.json)">${icon('upload')}Import</button><button class="btn btn-gold" data-act="new">${icon('plus')}New</button></div>
       </header>
       <div class="rx-toolbar">
         <label class="rx-search">${icon('search')}<input type="search" data-filter name="q" value="${esc(o.q)}" placeholder="Search titles, descriptions and tags" aria-label="Search investigations"></label>
@@ -99,6 +100,7 @@ R.views.home = (() => {
   function onClick(e) {
     const act = e.target.closest('[data-act]')?.dataset.act;
     if (act === 'new') R.editInv();
+    if (act === 'import') R.exporter.pickImport();
     if (act === 'reset') { Object.assign(f(), { q: '', type: '', status: '', tag: '' }); R.saveUi(); R.renderMain(); }
   }
 

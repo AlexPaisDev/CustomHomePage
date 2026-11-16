@@ -253,6 +253,30 @@
     </div>
   </dialog>
 
+  <!-- ============ EXPORT ============ -->
+  <dialog id="exp-dlg" class="dlg dlg-wide">
+    <div class="dlg-body">
+      <header class="p-head"><h2 id="exp-title">Export</h2></header>
+      <ul class="exp-list">
+        <li><span class="exp-ic"><svg class="ic"><use href="#i-file" /></svg></span>
+          <div><b>Report</b><small>Summary, findings, timeline, entities and their facts, open questions, notes, and a numbered source list that findings and facts cite as [n].</small></div>
+          <div class="exp-acts"><button type="button" class="btn btn-sm" data-exp="copy">Copy</button><button type="button" class="btn btn-sm" data-exp="md">Markdown</button><button type="button" class="btn btn-sm btn-gold" data-exp="pdf">PDF</button></div></li>
+        <li><span class="exp-ic"><svg class="ic"><use href="#i-database" /></svg></span>
+          <div><b>Backup</b><small>Everything in this investigation as JSON, to keep or to import into another browser (Import, on the investigations page).</small>
+            <label class="check mt"><input type="checkbox" id="exp-files"> Include uploaded files <span id="exp-files-n"></span></label></div>
+          <div class="exp-acts"><button type="button" class="btn btn-sm" data-exp="json">JSON</button></div></li>
+        <li><span class="exp-ic"><svg class="ic"><use href="#i-board" /></svg></span>
+          <div><b>Board</b><small>The whole board as a PNG image.</small></div>
+          <div class="exp-acts"><button type="button" class="btn btn-sm" data-exp="png" id="exp-png">PNG</button></div></li>
+        <li><span class="exp-ic"><svg class="ic"><use href="#i-quote" /></svg></span>
+          <div><b>Citations</b><small>The source list in Markdown, APA 7 or MLA 9.</small></div>
+          <div class="exp-acts"><button type="button" class="btn btn-sm" data-exp="cite">Open</button></div></li>
+      </ul>
+      <p class="muted">PDF opens the print dialog: choose “Save to PDF” as the printer.</p>
+      <div class="dlg-actions"><button type="button" class="btn" data-close>Close</button></div>
+    </div>
+  </dialog>
+
   <!-- ============ PICK FROM A LIST ============ -->
   <dialog id="pick-dlg" class="dlg">
     <div class="dlg-body">
@@ -282,6 +306,7 @@
       <dl class="keys">
         <dt><kbd>N</kbd></dt><dd>New investigation (new note on the Notes page)</dd>
         <dt><kbd>Shift</kbd> <kbd>N</kbd></dt><dd>New note, from anywhere in an investigation</dd>
+        <dt><kbd>X</kbd></dt><dd>Export: report, PDF, backup, board</dd>
         <dt><kbd>A</kbd></dt><dd>Add a source</dd>
         <dt><kbd>/</kbd></dt><dd>Filter the current list</dd>
         <dt><kbd>J</kbd> <kbd>K</kbd></dt><dd>Next / previous source or result</dd>
@@ -319,6 +344,8 @@
   <script src="research/views/notes.js"></script>
   <script src="research/views/findings.js"></script>
   <script src="research/views/timeline.js"></script>
+  <script src="research/views/tasks.js"></script>
+  <script src="research/export.js"></script>
   <script src="research/cite.js"></script>
   <script src="research/incoming.js"></script>
   <script src="research/app.js"></script>

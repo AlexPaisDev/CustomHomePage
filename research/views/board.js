@@ -724,5 +724,5 @@ R.views.board = (() => {
     return false;
   }
 
-  return { render, update, key, focusNode: id => { sel.clear(); sel.add(id); markSel(); } };
+  return { render, update, key, exportPng, focusNode: id => { sel.clear(); sel.add(id); markSel(); } };
 })();

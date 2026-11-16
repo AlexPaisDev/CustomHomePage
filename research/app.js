@@ -22,7 +22,7 @@ R.SECTIONS = [
   { k: 'timeline', label: 'Timeline', icon: 'timeline', phase: 5 },
   { k: 'tasks', label: 'Tasks', icon: 'list', phase: 6 },
 ];
-const BUILT = new Set(['overview', 'search', 'board', 'sources', 'entities', 'notes', 'findings', 'timeline']);
+const BUILT = new Set(R.SECTIONS.map(s => s.k));      // every section is built
 
 /* ---------- the investigator (os/investigator.js) narrates what happens ---------- */
 R.agent = (() => {
@@ -332,6 +332,7 @@ document.addEventListener('keydown', e => {
     n: () => R.editInv(),
     a: () => { if (S.inv) R.views.sources.add(); },
     h: () => R.go('#/'),
+    x: () => { if (S.inv) R.exporter.open(); },
     '/': () => $('[data-filter]', main)?.focus(),
     '[': toggleSide,
     ']': togglePanel,

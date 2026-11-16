@@ -706,3 +706,63 @@ a.rx-stat:hover { border-color: var(--gold-d); background: rgba(230, 189, 78, .0
 .pick-list button span { display: flex; flex-direction: column; min-width: 0; }
 .pick-list small { color: var(--text-3); font-size: 11px; }
 @media (hover: none) { .en-board { opacity: 1; } }
+
+/* ---------- tasks ---------- */
+.tk-new { display: flex; gap: 8px; margin-bottom: 14px; }
+.tk-new select, .tk-new input { height: 38px; padding: 0 10px; }
+.tk-new input { flex: 1; min-width: 0; }
+.tk-group { margin-bottom: 18px; }
+.tk-group h2, .tk-group summary { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 700 10.5px/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--gold-l); cursor: default; }
+.tk-group summary { cursor: pointer; color: var(--text-3); list-style: none; }
+.tk-group summary::-webkit-details-marker { display: none; }
+.tk-group h2 span, .tk-group summary span { color: var(--text-3); letter-spacing: 0; }
+.tk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.tk { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255, 255, 255, .02); }
+.tk-doing { border-color: rgba(98, 230, 240, .35); box-shadow: inset 3px 0 0 var(--cyan); }
+.tk-done .tk-text, .tk-dropped .tk-text { color: var(--text-3); text-decoration: line-through; }
+.tk-box { flex: none; display: grid; place-items: center; width: 20px; height: 20px; margin-top: 4px; border-radius: 6px; border: 1.5px solid var(--line-2); color: #0b0d29; transition: background .15s, border-color .15s; }
+.tk-box:hover { border-color: var(--green); }
+.tk-box.on { background: var(--green); border-color: var(--green); }
+.tk-box .ic { width: 13px; height: 13px; stroke-width: 3; }
+.tk-main { flex: 1; min-width: 0; }
+.tk-line { display: flex; align-items: center; gap: 8px; }
+.tk-kind { display: inline-flex; align-items: center; gap: 5px; flex: none; font: 600 9.5px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+.tk-kind .ic { width: 12px; height: 12px; }
+.tk-text { flex: 1; min-width: 0; height: 30px; padding: 0 6px; font-size: 14px; background: transparent; border-color: transparent; }
+.tk-text:hover { border-color: var(--line); }
+.tk-status { height: 28px; padding: 0 6px; font-size: 12px; }
+.tk .fd-row:empty { display: none; }
+.tk .fd-row { margin-left: 6px; }
+@container rxmain (max-width: 600px) { .tk-line { flex-wrap: wrap; } .tk-text { flex-basis: 100%; order: 3; } }
+
+/* ---------- export dialog ---------- */
+.exp-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.exp-list li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255, 255, 255, .02); }
+.exp-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: rgba(230, 189, 78, .1); color: var(--gold); }
+.exp-list b { display: block; font-weight: 600; }
+.exp-list small { display: block; margin-top: 2px; color: var(--text-3); font-size: 12px; line-height: 1.45; }
+.exp-list .check { margin: 8px 0 0; font-size: 12.5px; }
+.exp-acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 560px) { .exp-list li { grid-template-columns: auto 1fr; } .exp-acts { grid-column: 1 / -1; justify-content: flex-start; } }
+
+/* ---------- printing the report (Export → PDF) ---------- */
+.rx-print { display: none; }
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body { background: #fff !important; color: #16142b !important; overflow: visible !important; height: auto !important; }
+  body > *:not(.rx-print) { display: none !important; }
+  html::before, html::after { display: none !important; }
+  .rx-print { display: block !important; max-width: none; font: 11pt/1.55 Inter, "Segoe UI", system-ui, sans-serif; color: #16142b; }
+  .rx-print h1 { font-size: 22pt; margin: 0 0 4pt; color: #16142b; }
+  .rx-print h2 { font-size: 15pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 1.5pt solid #b2892c; color: #16142b; break-after: avoid; }
+  .rx-print h3 { font-size: 12pt; margin: 12pt 0 4pt; color: #2c2a55; break-after: avoid; }
+  .rx-print h4, .rx-print h5 { font-size: 11pt; color: #6b5420; }
+  .rx-print p, .rx-print li { color: #16142b; }
+  .rx-print em { color: #4a4770; }
+  .rx-print a { color: #1d4e9e; text-decoration: none; }
+  .rx-print blockquote { border-left: 2pt solid #b2892c; color: #3a3860; }
+  .rx-print li { break-inside: avoid; }
+  .rx-print hr { border-top: 1pt solid #ccc; }
+  .rx-print code { background: #f3efe2; color: #6b5420; }
+  .rx-print .md-box { border-color: #888; }
+}
