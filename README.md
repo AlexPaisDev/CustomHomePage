@@ -16,6 +16,7 @@ Plain HTML, CSS and JavaScript. No build step, no framework, and no accounts: op
 | **System bar** | Home-network status, GitHub unread count, a running focus timer, weather, lock, shortcuts, settings. |
 | **Search** | Pick one engine or several at once from the badge in the search bar (several open one tab each). Bangs at the start or end: `!yt lofi`, `lofi !yt`, `!g !d rust`. Bangs are editable in Settings. Also `= 2^10/4` for maths, `host:port` to open a LAN address, link names, and recent searches. |
 | **Avalon Search** | A combined results page (`results.html`). It queries several sources at once, merges results that point at the same page, ranks pages found by more sources higher, and labels each result with every source that found it. Open it with `!av query`, or set *several engines open as → Avalon page* in the engine picker. |
+| **Research** | A workspace for investigating a company, a person or a topic over time (`research.html`, or the document button in the top bar). Each investigation keeps its sources (links, uploaded PDFs and images, pasted text), a reliability rating and notes per source, saved highlights, and citation export in Markdown, APA 7 or MLA 9. Search, a board, entities, findings, a timeline and tasks are being added in stages. |
 | **Command palette** | Type `>` in the search bar: lock, start focus, add task, open settings, toggle sounds, and more. |
 | **Launchpad** | Grouped links with favicons. Press `E` to edit or drag-reorder, and `1`–`9` to open one. |
 | **Sentinel** | Watches your home services (router, NAS, Jellyfin…) every minute, with latency and uptime history. The guardian's eyes turn amber or red when something stops answering. |
@@ -114,6 +115,11 @@ Everything is kept in `localStorage` (key `avalon_home_v1`, plus small caches fo
 GitHub, weather and Sentinel). Data from the earlier "Hunter Interface" versions is migrated
 automatically. Use **Settings → Data** to export or import a JSON backup.
 
+Research keeps its investigations in the browser's IndexedDB (database `avalon_research`), which can hold
+uploaded files. If the browser blocks IndexedDB for the page, Research falls back to `localStorage`
+without uploads, and says so at the bottom of its sidebar. Its links always use `#/…` rather than `?…`,
+because Firefox can give a `file://` page with a query string its own separate storage.
+
 External services used, all keyless: Open-Meteo (weather and city search), the Hacker News Algolia
 API, the dev.to API, the GitHub REST/GraphQL API, Google's favicon service, and Google Fonts.
 
@@ -123,3 +129,6 @@ API, the dev.to API, the GitHub REST/GraphQL API, Google's favicon service, and 
 - `style.css`: Avalon theme, layout, animations
 - `app.js`: all behaviour, in commented sections (state, guardian, search, feed, GitHub, Sentinel, lock screen…)
 - `results.html` + `results.js`: Avalon Search, the combined results page (sources, merging, ranking)
+- `research.html` + `research.css` + `research/`: the Research workspace
+  - `util.js` helpers · `db.js` IndexedDB storage · `store.js` data model · `app.js` layout, routes, shortcuts
+  - `views/` one file per section (home, overview, sources) · `cite.js` citation export

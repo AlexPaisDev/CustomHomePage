@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Avalon Research</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M1 28 9 6l8 22z' fill='%23e6bd4e'/%3E%3Cpath d='M10 6h12l-6 22z' fill='%23f7dc84'/%3E%3Cpath d='M15 28 23 6l8 22z' fill='%23b2892c'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="research.css">
+</head>
+
+<body class="rx-page">
+  <!-- ============ ICON SPRITE ============ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f7dc84" /><stop offset=".55" stop-color="#e6bd4e" /><stop offset="1" stop-color="#b2892c" />
+      </linearGradient>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z" /><path d="m2 17 10 5 10-5M2 12l10 5 10-5" /></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14" /></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z" /><path d="M14 2v6h6" /></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" /></symbol>
+      <symbol id="i-text" viewBox="0 0 24 24"><path d="M17 6H3M21 12H3M15 18H3" /></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21" /></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></symbol>
+      <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01" /></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5" /><path d="M20 21a8 8 0 0 0-16 0" /></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" /></symbol>
+      <symbol id="i-shapes" viewBox="0 0 24 24"><path d="M8.3 10a.7.7 0 0 1-.63-1.08L11.4 3a.7.7 0 0 1 1.2-.04l3.7 5.94a.7.7 0 0 1-.57 1.1z" /><rect x="3" y="14" width="7" height="7" rx="1" /><circle cx="17.5" cy="17.5" r="3.5" /></symbol>
+      <symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></symbol>
+      <symbol id="i-board" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" /></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></symbol>
+      <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" /></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></symbol>
+      <symbol id="i-timeline" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M3 12h6M15 12h6M12 3v3M12 18v3" /></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4M3 7l2 2 4-4M13 6h8M13 12h8M13 18h8" /></symbol>
+      <symbol id="i-newspaper" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z" /></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></symbol>
+      <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></symbol>
+      <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z" /></symbol>
+      <symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4z" /><rect x="2" y="6" width="14" height="12" rx="2" /></symbol>
+      <symbol id="i-panel-right" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M15 3v18" /></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" /></symbol>
+      <symbol id="i-quote" viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 1.97V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 0-1 1.03V20c0 1 0 1 1 1z" /><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 1.97V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" /></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" /></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z" /><path d="M12 9v4M12 17h.01" /></symbol>
+      <symbol id="i-research" viewBox="0 0 24 24"><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M4.27 21a2 2 0 0 0 1.73 1h12a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3" /><path d="m9 18-1.5-1.5" /><circle cx="5" cy="14" r="3" /></symbol>
+      <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5v14a9 3 0 0 0 18 0V5M3 12a9 3 0 0 0 18 0" /></symbol>
+    </defs>
+  </svg>
+
+  <div class="sky" aria-hidden="true"></div>
+
+  <!-- ============ SYSTEM BAR ============ -->
+  <header class="osbar">
+    <div class="os-left">
+      <button class="icon-btn sm rx-menu" id="rx-menu" title="Investigations ([)" aria-label="Show investigations"><svg class="ic"><use href="#i-menu" /></svg></button>
+      <a class="rx-brand" href="index.html" title="Back to Avalon home">
+        <svg class="os-mark" viewBox="0 0 250 108" aria-hidden="true">
+          <g fill="url(#g-gold)"><path d="M0 108 58 0l58 108z" /><path d="M66 0h118l-59 108z" /><path d="M134 108 192 0l58 108z" /></g>
+          <g fill="#62e6f0"><circle cx="58" cy="72" r="7" /><circle cx="125" cy="36" r="7" /><circle cx="192" cy="72" r="7" /></g>
+        </svg>
+        <span class="os-name">Avalon</span>
+      </a>
+      <span class="os-ver">Research</span>
+    </div>
+    <div class="os-tray">
+      <a class="tray" href="results.html" title="Avalon Search"><svg class="ic"><use href="#i-layers" /></svg><span class="rx-hide-sm">Search</span></a>
+      <span class="tray-sep" aria-hidden="true"></span>
+      <button class="icon-btn sm" id="rx-help-btn" title="Shortcuts (?)" aria-label="Shortcuts"><svg class="ic"><use href="#i-help" /></svg></button>
+      <button class="icon-btn sm" id="rx-panel-btn" title="Details panel (])" aria-label="Toggle details panel"><svg class="ic"><use href="#i-panel-right" /></svg></button>
+      <a class="icon-btn sm" href="index.html" title="Home" aria-label="Avalon home"><svg class="ic"><use href="#i-home" /></svg></a>
+    </div>
+  </header>
+
+  <!-- ============ WORKSPACE ============ -->
+  <div class="rx" id="rx">
+    <aside class="rx-side" id="rx-side" aria-label="Investigations">
+      <div class="rx-side-scroll">
+        <button class="btn btn-gold rx-new" id="rx-new"><svg class="ic"><use href="#i-plus" /></svg>New investigation</button>
+        <div id="rx-current"></div>
+        <div class="rx-side-h"><a href="#/">All investigations</a><span id="rx-count"></span></div>
+        <input class="rx-side-filter" id="rx-side-filter" type="search" placeholder="Filter…" aria-label="Filter investigations">
+        <ul class="rx-inv-list" id="rx-inv-list"></ul>
+      </div>
+      <div class="rx-side-foot" id="rx-foot"></div>
+      <div class="rx-resize" data-resize="side" aria-hidden="true"></div>
+    </aside>
+
+    <main class="rx-main" id="rx-main" tabindex="-1"></main>
+
+    <aside class="rx-panel" id="rx-panel" aria-label="Details">
+      <div class="rx-resize" data-resize="panel" aria-hidden="true"></div>
+      <div class="rx-panel-body" id="rx-panel-body"></div>
+    </aside>
+  </div>
+  <div class="rx-scrim" id="rx-scrim" hidden></div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <!-- ============ INVESTIGATION DIALOG ============ -->
+  <dialog id="inv-dlg" class="dlg dlg-wide">
+    <form method="dialog" class="dlg-body" id="inv-form">
+      <header class="p-head"><h2 id="inv-dlg-title">New investigation</h2></header>
+      <div class="set-grid">
+        <label class="field span2"><span>Title</span><input name="title" required maxlength="140" placeholder="Galp Energia · Ada Lovelace · Solid-state batteries"></label>
+        <label class="field"><span>Type</span><select name="type"></select></label>
+        <label class="field"><span>Status</span><select name="status"></select></label>
+        <label class="field span2"><span>Description</span><textarea name="description" rows="3" maxlength="4000" placeholder="What are you trying to find out?"></textarea></label>
+        <label class="field span2"><span>Tags (comma separated)</span><input name="tags" list="rx-tag-list" placeholder="energy, portugal, due diligence"></label>
+      </div>
+      <datalist id="rx-tag-list"></datalist>
+      <div class="dlg-actions">
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button class="btn btn-gold">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ============ ADD SOURCE DIALOG ============ -->
+  <dialog id="src-dlg" class="dlg dlg-wide">
+    <form method="dialog" class="dlg-body" id="src-form" novalidate>
+      <header class="p-head"><h2>Add source</h2></header>
+      <div class="seg-tabs rx-kinds" id="src-kinds" role="tablist">
+        <button type="button" data-k="url" class="on"><svg class="ic"><use href="#i-link" /></svg>Link</button>
+        <button type="button" data-k="file"><svg class="ic"><use href="#i-upload" /></svg>File</button>
+        <button type="button" data-k="text"><svg class="ic"><use href="#i-text" /></svg>Text</button>
+      </div>
+      <div data-for="url">
+        <label class="field"><span>URL</span><input name="url" type="text" inputmode="url" spellcheck="false" placeholder="https://…"></label>
+        <div class="rx-dup" id="src-dup" hidden></div>
+      </div>
+      <div data-for="file" hidden>
+        <label class="rx-drop" id="src-drop">
+          <input type="file" name="file" accept="application/pdf,image/*" hidden>
+          <svg class="ic"><use href="#i-upload" /></svg>
+          <span id="src-file-txt">Choose a PDF or image, or drop it here</span>
+        </label>
+      </div>
+      <div data-for="text" hidden>
+        <label class="field"><span>Text</span><textarea name="text" rows="6" placeholder="Paste or type the text: an email, a transcript, something you were told…"></textarea></label>
+      </div>
+      <div class="set-grid">
+        <label class="field span2"><span>Title</span><input name="title" maxlength="300" placeholder="Filled in from the link or file if left empty"></label>
+        <label class="field"><span>Type</span><select name="type"></select></label>
+        <label class="field"><span>Reliability</span><select name="reliability"></select></label>
+        <label class="field"><span>Author</span><input name="author" placeholder="Surname, A."></label>
+        <label class="field"><span>Publisher / site</span><input name="publisher" placeholder="Reuters"></label>
+        <label class="field"><span>Published</span><input name="publishedAt" placeholder="2024, 2024-03 or 2024-03-15"></label>
+        <label class="field"><span>Accessed</span><input name="accessedAt" type="date"></label>
+        <label class="field span2"><span>Notes</span><textarea name="notes" rows="2" placeholder="Why it matters, what to check…"></textarea></label>
+      </div>
+      <p class="rx-form-err" id="src-err" hidden></p>
+      <div class="dlg-actions">
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button class="btn btn-gold" id="src-save">Save source</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ============ CITATIONS DIALOG ============ -->
+  <dialog id="cite-dlg" class="dlg dlg-wide">
+    <div class="dlg-body">
+      <header class="p-head"><h2>Export citations</h2><span class="p-meta" id="cite-count"></span></header>
+      <div class="seg-tabs rx-kinds" id="cite-fmt">
+        <button type="button" data-f="md" class="on">Markdown</button>
+        <button type="button" data-f="apa">APA 7</button>
+        <button type="button" data-f="mla">MLA 9</button>
+      </div>
+      <label class="check mt"><input type="checkbox" id="cite-filtered"> Only the sources the current filters show</label>
+      <textarea class="rx-cite-out" id="cite-out" readonly rows="14" aria-label="Citations"></textarea>
+      <p class="muted">Authors are used exactly as typed, so write them as "Surname, A." for strict APA and MLA. Titles in <code>*asterisks*</code> are italic (Markdown).</p>
+      <div class="dlg-actions">
+        <button type="button" class="btn" data-close>Close</button>
+        <button type="button" class="btn" id="cite-copy"><svg class="ic"><use href="#i-copy" /></svg>Copy</button>
+        <button type="button" class="btn btn-gold" id="cite-dl"><svg class="ic"><use href="#i-download" /></svg>Download</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============ CONFIRM DIALOG ============ -->
+  <dialog id="ask-dlg" class="dlg">
+    <form method="dialog" class="dlg-body">
+      <header class="p-head"><h2 id="ask-title">Are you sure?</h2></header>
+      <p class="muted" id="ask-text"></p>
+      <div class="dlg-actions">
+        <button class="btn" value="cancel">Cancel</button>
+        <button class="btn btn-danger" id="ask-ok" value="ok">Delete</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ============ SHORTCUTS ============ -->
+  <dialog id="help-dlg" class="dlg">
+    <div class="dlg-body">
+      <header class="p-head"><h2>Research shortcuts</h2></header>
+      <dl class="keys">
+        <dt><kbd>N</kbd></dt><dd>New investigation</dd>
+        <dt><kbd>A</kbd></dt><dd>Add a source</dd>
+        <dt><kbd>/</kbd></dt><dd>Filter the current list</dd>
+        <dt><kbd>J</kbd> <kbd>K</kbd></dt><dd>Next / previous source</dd>
+        <dt><kbd>Alt</kbd> <kbd>1</kbd>–<kbd>9</kbd></dt><dd>Switch section</dd>
+        <dt><kbd>H</kbd></dt><dd>All investigations</dd>
+        <dt><kbd>[</kbd> <kbd>]</kbd></dt><dd>Toggle sidebar / details panel</dd>
+        <dt><kbd>Esc</kbd></dt><dd>Close the details panel</dd>
+      </dl>
+      <div class="dlg-actions"><button type="button" class="btn" data-close>Close</button></div>
+    </div>
+  </dialog>
+
+  <script src="research/util.js"></script>
+  <script src="research/db.js"></script>
+  <script src="research/store.js"></script>
+  <script src="research/views/home.js"></script>
+  <script src="research/views/overview.js"></script>
+  <script src="research/views/sources.js"></script>
+  <script src="research/cite.js"></script>
+  <script src="research/app.js"></script>
+</body>
+
+</html>

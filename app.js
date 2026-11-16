@@ -1727,6 +1727,7 @@ function commands() {
     ['Write in memo', 'M', () => { reveal('memo-panel'); memo.focus({ preventScroll: true }); }],
     ['Choose search engines', '', () => openEnginePop()],
     ['Open Avalon Search', '', () => openUrl('results.html')],
+    ['Open Research workspace', '', () => openUrl('research.html')],
     [`Several engines open as ${s.multiMode === 'avalon' ? 'tabs' : 'one Avalon page'}`, '', () => {
       s.multiMode = s.multiMode === 'avalon' ? 'tabs' : 'avalon'; save(); renderEngineBadge();
       toast(`Several engines now open as ${s.multiMode === 'avalon' ? 'one Avalon results page' : 'separate tabs'}.`);
