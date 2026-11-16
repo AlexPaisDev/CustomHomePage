@@ -9,10 +9,11 @@ R.views.overview = (() => {
   function stats() {
     const src = S.sources;
     return [
-      ['Sources', src.length, 'link'],
-      ['Highlights', S.highlights.length, 'quote'],
-      ['Reliable', src.filter(s => s.reliability >= 4).length, 'check'],
-      ['Unverified', src.filter(s => !s.reliability).length, 'alert'],
+      ['Sources', src.length, 'link', 'sources', `${src.filter(s => s.reliability >= 4).length} reliable`],
+      ['Entities', S.entities.length, 'users', 'entities', `${S.nodes.length} on the board`],
+      ['Findings', S.findings.length, 'check', 'findings', `${S.findings.filter(f => f.confidence === 'confirmed').length} confirmed`],
+      ['Notes', S.notes.length, 'pen', 'notes', `${S.highlights.length} highlights`],
+      ['Open tasks', S.tasks.filter(t => t.status !== 'done' && t.status !== 'dropped').length, 'list', 'tasks', `${S.tasks.filter(t => t.status === 'done').length} done`],
     ];
   }
 
@@ -35,7 +36,7 @@ R.views.overview = (() => {
       ${i.description ? `<p class="rx-desc">${esc(i.description)}</p>` : `<p class="rx-desc muted">No description yet. <button class="link-btn" data-act="edit">Add one</button></p>`}
 
       <div class="rx-stats">
-        ${stats().map(([l, n, ic]) => `<div class="rx-stat">${icon(ic)}<b>${n}</b><span>${l}</span></div>`).join('')}
+        ${stats().map(([l, n, ic, sec, sub]) => `<a class="rx-stat" href="${R.invHash(i.id, sec)}">${icon(ic)}<b>${n}</b><span>${l}</span><small>${esc(sub)}</small></a>`).join('')}
       </div>
 
       <div class="rx-cols">

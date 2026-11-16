@@ -22,7 +22,7 @@ R.SECTIONS = [
   { k: 'timeline', label: 'Timeline', icon: 'timeline', phase: 5 },
   { k: 'tasks', label: 'Tasks', icon: 'list', phase: 6 },
 ];
-const BUILT = new Set(['overview', 'search', 'board', 'sources']);
+const BUILT = new Set(['overview', 'search', 'board', 'sources', 'entities', 'notes', 'findings', 'timeline']);
 
 /* ---------- the investigator (os/investigator.js) narrates what happens ---------- */
 R.agent = (() => {
@@ -133,7 +133,7 @@ function renderSide() {
   const cur = $('#rx-current');
   if (S.inv) {
     const i = S.inv, st = R.STATUS[i.status] || R.STATUS.active;
-    const counts = { sources: S.sources.length };
+    const counts = { sources: S.sources.length, entities: S.entities.length, notes: S.notes.length, findings: S.findings.length, tasks: S.tasks.filter(t => t.status !== 'done' && t.status !== 'dropped').length };
     cur.innerHTML = `
       <a class="rx-cur" href="${R.invHash(i.id)}">
         <span class="rx-cur-type">${typeIcon(i.type)}${esc(R.TYPES[i.type]?.label || 'Custom')}<i class="st ${st.cls}">${st.label}</i></span>
@@ -293,7 +293,7 @@ document.addEventListener('click', e => {
 
 /* ---------- reacting to data changes ---------- */
 R.store.on((kind, id, from) => {
-  if (['invs', 'inv', 'sources', 'external', 'closed'].includes(kind)) renderSide();
+  if (['invs', 'inv', 'sources', 'entities', 'notes', 'findings', 'tasks', 'external', 'closed'].includes(kind)) renderSide();
   if (kind === 'closed') { toast('This investigation was deleted in another tab.', 'err'); return R.go('#/'); }
   if (R.route.inv && !S.inv) return R.go('#/');      // the open investigation was just deleted
   if (kind === 'sources' || kind === 'highlights') renderFoot();
@@ -323,6 +323,11 @@ document.addEventListener('keydown', e => {
   }
   if (R.views[R.route.view]?.key?.(e)) return;        // the board handles its own keys first
   if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === 'N' && e.shiftKey && S.inv) {           // Shift+N: a new note from anywhere in the case
+    e.preventDefault();
+    R.goAndWait(R.invHash(S.inv.id, 'notes')).then(() => R.views.notes.create());
+    return;
+  }
   const act = {
     n: () => R.editInv(),
     a: () => { if (S.inv) R.views.sources.add(); },

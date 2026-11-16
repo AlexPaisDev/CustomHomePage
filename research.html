@@ -253,6 +253,16 @@
     </div>
   </dialog>
 
+  <!-- ============ PICK FROM A LIST ============ -->
+  <dialog id="pick-dlg" class="dlg">
+    <div class="dlg-body">
+      <header class="p-head"><h2 id="pick-title">Pick one</h2></header>
+      <input class="rx-side-filter" id="pick-filter" type="search" placeholder="Filter…" aria-label="Filter">
+      <ul class="rx-links pick-list" id="pick-list"></ul>
+      <div class="dlg-actions"><button type="button" class="btn" data-close>Cancel</button></div>
+    </div>
+  </dialog>
+
   <!-- ============ CONFIRM DIALOG ============ -->
   <dialog id="ask-dlg" class="dlg">
     <form method="dialog" class="dlg-body">
@@ -270,7 +280,8 @@
     <div class="dlg-body">
       <header class="p-head"><h2>Research shortcuts</h2></header>
       <dl class="keys">
-        <dt><kbd>N</kbd></dt><dd>New investigation</dd>
+        <dt><kbd>N</kbd></dt><dd>New investigation (new note on the Notes page)</dd>
+        <dt><kbd>Shift</kbd> <kbd>N</kbd></dt><dd>New note, from anywhere in an investigation</dd>
         <dt><kbd>A</kbd></dt><dd>Add a source</dd>
         <dt><kbd>/</kbd></dt><dd>Filter the current list</dd>
         <dt><kbd>J</kbd> <kbd>K</kbd></dt><dd>Next / previous source or result</dd>
@@ -303,6 +314,11 @@
   <script src="research/views/search.js"></script>
   <script src="research/views/board.js"></script>
   <script src="research/entity-panel.js"></script>
+  <script src="research/markdown.js"></script>
+  <script src="research/views/entities.js"></script>
+  <script src="research/views/notes.js"></script>
+  <script src="research/views/findings.js"></script>
+  <script src="research/views/timeline.js"></script>
   <script src="research/cite.js"></script>
   <script src="research/incoming.js"></script>
   <script src="research/app.js"></script>
