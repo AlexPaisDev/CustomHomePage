@@ -444,5 +444,7 @@ R.views.sources = (() => {
     return false;
   }
 
-  return { render, update, add, select, step };
+  /** Show a source's details panel from anywhere (board, search, entities). */
+  const openPanel = id => { if (S.sources.some(s => s.id === id)) R.panel.open(`source:${id}`, body => panel(body, id)); };
+  return { render, update, add, select, step, openPanel };
 })();

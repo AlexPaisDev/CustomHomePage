@@ -22,7 +22,7 @@ R.SECTIONS = [
   { k: 'timeline', label: 'Timeline', icon: 'timeline', phase: 5 },
   { k: 'tasks', label: 'Tasks', icon: 'list', phase: 6 },
 ];
-const BUILT = new Set(['overview', 'search', 'sources']);
+const BUILT = new Set(['overview', 'search', 'board', 'sources']);
 
 /* ---------- the investigator (os/investigator.js) narrates what happens ---------- */
 R.agent = (() => {
@@ -111,6 +111,7 @@ function renderMain() {
   el.className = `rx-view rx-v-${v}${enter ? ' rx-enter' : ''}`;   // only navigation animates, not data refreshes
   enter = false;
   main.replaceChildren(el);
+  main.classList.toggle('rx-full', v === 'board');     // the board fills the whole area
   if (v !== 'home' && !BUILT.has(v)) return renderSoon(el, v);
   R.views[v].render(el);
 }
@@ -320,6 +321,7 @@ document.addEventListener('keydown', e => {
     if (R.panel.key) return R.panel.close();
     return;
   }
+  if (R.views[R.route.view]?.key?.(e)) return;        // the board handles its own keys first
   if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
   const act = {
     n: () => R.editInv(),

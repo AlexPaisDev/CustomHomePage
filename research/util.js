@@ -165,6 +165,15 @@ R.SOURCE_TYPES = {
   video: { label: 'Video', icon: 'video' },
   other: { label: 'Other', icon: 'shapes' },
 };
+/** Kinds of entity (people, organisations…) and their colour on the board. */
+R.ENTITY_KINDS = {
+  person: { label: 'Person', icon: 'user', color: '#62e6f0' },
+  organisation: { label: 'Organisation', icon: 'building', color: '#e6bd4e' },
+  place: { label: 'Place', icon: 'pin', color: '#6fdca0' },
+  event: { label: 'Event', icon: 'calendar', color: '#ffc857' },
+  document: { label: 'Document', icon: 'file', color: '#b27bff' },
+  other: { label: 'Other', icon: 'shapes', color: '#9a94c9' },
+};
 /** 0 = not assessed yet; 1–5 from unreliable to authoritative. */
 R.RELIABILITY = ['Unverified', 'Unreliable', 'Questionable', 'Mixed', 'Reliable', 'Authoritative'];
 R.relBar = n => `<span class="rel rel-${n}" title="${R.RELIABILITY[n]}">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>`;
