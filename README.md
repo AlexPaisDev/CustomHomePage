@@ -13,11 +13,13 @@ Plain HTML, CSS and JavaScript. No build step, no framework, and no accounts: op
 | | |
 |---|---|
 | **Intro and lock screen** | Every time the page opens (Home button, new tab) the Avalon logo animates in and dissolves into the dashboard. When the browser starts, on `#idle`, from the moon button or `I`, or after a period of inactivity (optional), the full lock screen shows instead, with clock, weather and network status. Any key or click skips or enters, and a typed letter goes straight into search. Choose the behaviour in Settings → General. |
-| **One OS, three apps** | Home, Search and Research share a switcher in the middle of the system bar. Moving between them plays an Avalon transition instead of a hard page load: the page sinks back, the gold mark assembles like the lock-screen intro, and the next app opens on that same frame and dissolves into view (about 1.7 s in all). `G` then `H`, `S` or `R` jumps between apps from the keyboard. |
+| **One OS, four apps** | Home, Search, Research and Treasury share a switcher in the middle of the system bar. Moving between them plays an Avalon transition instead of a hard page load: the page sinks back, the gold mark assembles like the lock-screen intro, and the next app opens on that same frame and dissolves into view (about 1.7 s in all). `G` then `H`, `S`, `R` or `T` jumps between apps from the keyboard. |
 | **The investigator** | An iron soldier of Avalon in a detective's coat, hat, notebook and magnifying glass. He lives in Research's sidebar and on the Search page and reacts to what you do: searching while sources load, writing when you file a source or a quote, a "!" when he spots a duplicate, and a short report when a search finishes. Click him for a line. |
 | **System bar** | Home-network status, GitHub unread count, a running focus timer, weather, lock, shortcuts, settings. |
 | **Search** | Pick one engine or several at once from the badge in the search bar (several open one tab each). Bangs at the start or end: `!yt lofi`, `lofi !yt`, `!g !d rust`. Bangs are editable in Settings. Also `= 2^10/4` for maths, `host:port` to open a LAN address, link names, and recent searches. |
 | **Avalon Search** | A combined results page (`results.html`). It queries several sources at once, merges results that point at the same page, ranks pages found by more sources higher, and labels each result with every source that found it. Open it with `!av query`, or set *several engines open as → Avalon page* in the engine picker. |
+| **The accountant** | Another iron soldier, kept in Treasury: a green eyeshade with a pencil tucked behind it, rolled sleeves with red garters, a blue waistcoat with a watch chain, a ledger and an abacus. He keeps the month's pace in his status line, writes when you log an entry, counts on the abacus when you set money aside, frowns (amber, then red eyes) as a category nears or passes its budget, and stacks coins at his feet as your wishes get funded. |
+| **Treasury** | A wishlist and an expense tracker (`treasury.html`, or Treasury in the app switcher). The **command deck** on top takes one line: `12.50 coffee`, `+1200 salary`, `38 fuel yesterday #transport`, `wish Headphones 199 https://…`, and shows how it read it (amount, category, day) before you press Enter; the category is guessed from the words and from what you logged before. The **Vault** shows the month: a ring of what went where against the budget, where the month will end at this pace, the daily allowance left, a burn chart against even pace, six months of spending, upcoming payments and a ticker of observations. The **Ledger** lists a month's entries by day with filters, search and a heat calendar. The **Wishlist** keeps things to buy with their price history, money set aside, priority (need / want / dream), a buy-by date with the monthly saving it needs, and a cool-off: new wishes wait some days (14 by default) before they count as ready. Acquiring one logs the expense. **Budgets** set a monthly limit per category, with an even-pace marker. **Recurring** payments (rent, bills, subscriptions) log themselves on their day. Settings choose the currency; Data exports a JSON backup or a CSV of the expenses. |
 | **Research** | A workspace for investigating a company, a person or a topic over time (`research.html`, or Research in the app switcher). Each investigation keeps its sources (links, uploaded PDFs and images, pasted text), a reliability rating and notes per source, saved highlights, and citation export in Markdown, APA 7 or MLA 9. Its **Search** section uses presets per subject (a company's leadership, financials, registry filings, domains, social profiles, reviews; a person's profile and publications; a topic's key concepts, academic papers and opposing views) over the Avalon Search sources plus Wikidata, OpenAlex, Crossref, ORCID, GLEIF, domain records (RDAP), the Wayback Machine, Mastodon and Bluesky, and saves any result as a source in one click. `+ Research` on an Avalon Search result files it into an investigation. The **Board** is an infinite corkboard: entities (people, organisations, places, events, documents), sticky notes, pinned sources, images and group frames, joined by labelled connections ("CEO of", "owns", "contradicts"…), with drag, resize, colours, multi-select, undo/redo and PNG export. Clicking an entity opens everything known about it: facts that cite their sources (or are filled from Wikidata), connections, sources, notes and the other investigations it appears in. **Entities** lists them all, suggests new ones found in your notes and facts (a CEO, a parent company, a headquarters city) and links entities across investigations. **Notes** are Markdown with `[[Entity]]` and `@[Source]` links that autocomplete and turn into chips. **Findings** are claims with a confidence level and the sources for and against them. The **Timeline** builds itself from every date in the case. **Tasks** keep the open questions and leads. **Export** (`X`) writes a report (summary, findings, timeline, entities and facts, open questions, notes and a numbered source list) as Markdown or PDF, saves a JSON backup that **Import** on the investigations page restores, and exports the board as PNG. |
 | **Command palette** | Type `>` in the search bar: lock, start focus, add task, open settings, toggle sounds, and more. |
 | **Launchpad** | Grouped links with favicons. Press `E` to edit or drag-reorder, and `1`–`9` to open one. |
@@ -96,7 +98,7 @@ SearXNG needs two changes for this to work:
 
 ### Opening the pages from disk (file://)
 
-Since Firefox 92, every local file is its own origin, so Home, Search and Research each have their own
+Since Firefox 92, every local file is its own origin, so Home, Search, Research and Treasury each have their own
 storage. Avalon carries the search settings (SearXNG address, Wikipedia language, bangs; never the
 GitHub token) along when you switch apps with the switcher, so open Search or Research from Home once
 after changing them. Serving the folder over http (for example from the home server) removes this
@@ -117,7 +119,7 @@ limit: all apps then share one storage.
 | `R` | Refresh feed and GitHub |
 | `E` | Edit links |
 | `I` | Lock screen |
-| `G` then `H` / `S` / `R` | Switch to Home, Search or Research (works on every Avalon page) |
+| `G` then `H` / `S` / `R` / `T` | Switch to Home, Search, Research or Treasury (works on every Avalon page) |
 | `?` | All shortcuts |
 
 ## Data
@@ -130,6 +132,9 @@ Research keeps its investigations in the browser's IndexedDB (database `avalon_r
 uploaded files. If the browser blocks IndexedDB for the page, Research falls back to `localStorage`
 without uploads, and says so at the bottom of its sidebar. Its links always use `#/…` rather than `?…`,
 because Firefox can give a `file://` page with a query string its own separate storage.
+
+Treasury keeps its books in `localStorage` (key `avalon_treasury_v1`): amounts in whole cents, days as
+`YYYY-MM-DD`. Wish pictures are links, not uploads. Use its Settings → Backup now and then.
 
 External services used, all keyless: Open-Meteo (weather and city search), the Hacker News Algolia
 API, the dev.to API, the GitHub REST/GraphQL API, Google's favicon service, and Google Fonts.
@@ -144,8 +149,13 @@ API, the dev.to API, the GitHub REST/GraphQL API, Google's favicon service, and 
 - `os/`: the layer every page shares
   - `os.js` + `os.css`: app switcher, transitions between apps, dialog motion
   - `investigator.js`: the investigator sprite and his status line
+  - `accountant.js`: the accountant sprite and his status line
 - `research.html` + `research.css` + `research/`: the Research workspace
   - `util.js` helpers · `db.js` IndexedDB storage · `store.js` data model · `app.js` layout, routes, shortcuts
   - `views/` one file per section (home, overview, search, sources, board, entities, notes, findings, timeline, tasks)
   - `export.js` report, PDF, backup and import · `incoming.js` results handed over from Avalon Search
   - `entity-panel.js` entity details · `markdown.js` safe Markdown for notes · `cite.js` citations
+- `treasury.html` + `treasury.css` + `treasury/`: Treasury, the wishlist and expense tracker
+  - `core.js` helpers, money, dates, storage, the quick-entry parser · `charts.js` ring, burn chart, bars, sparklines
+  - `app.js` rail, routes, command deck, the accountant, shortcuts · `editors.js` the forms
+  - `views/` one file per section (overview = Vault, ledger, wishlist, budgets, recurring)

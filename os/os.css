@@ -1,5 +1,5 @@
 /* =====================================================================
-   AVALON OS LAYER — shared by every Avalon page (home, Search, Research)
+   AVALON OS LAYER — shared by every Avalon page (home, Search, Research, Treasury)
    App switcher in the system bar, the transition between apps, dialog
    motion. Pages opt in with <html data-app="…"> and os/os.js.
    ===================================================================== */
@@ -92,7 +92,8 @@ html.os-arrive.os-arrived::before { animation: os-out .6s cubic-bezier(.4, 0, .2
 
 body.os-enter .osbar { animation: os-bar .6s cubic-bezier(.2, .8, .3, 1) .18s both; }
 html:not([data-app="home"]) body.os-enter > main,
-html:not([data-app="home"]) body.os-enter > .rx { animation: os-rise .75s cubic-bezier(.2, .8, .3, 1) .24s both; }
+html:not([data-app="home"]) body.os-enter > .rx,
+html:not([data-app="home"]) body.os-enter > .tr { animation: os-rise .75s cubic-bezier(.2, .8, .3, 1) .24s both; }
 
 @keyframes os-in { from { opacity: 0; } }
 @keyframes os-out { to { opacity: 0; visibility: hidden; } }

@@ -1,9 +1,9 @@
 /* =====================================================================
    AVALON OS LAYER — shared by every Avalon page
-   - App switcher (Home · Search · Research) with a sliding indicator
+   - App switcher (Home · Search · Research · Treasury) with a sliding indicator
    - Animated hand-over between apps: links to another app and
      AvalonOS.go(url) play the exit, the next page plays the arrival
-   - "G then H / S / R" jumps between apps from the keyboard
+   - "G then H / S / R / T" jumps between apps from the keyboard
    The arrival is detected before first paint by the small inline script
    in each page's <head>: the link carries "#~os:<from>" (removed again
    at once), with a localStorage note as a second channel. The hash is
@@ -15,6 +15,7 @@
     { k: 'home', file: 'index.html', label: 'Home', key: 'h' },
     { k: 'search', file: 'results.html', label: 'Search', key: 's' },
     { k: 'research', file: 'research.html', label: 'Research', key: 'r' },
+    { k: 'treasury', file: 'treasury.html', label: 'Treasury', key: 't' },
   ];
   const NAV_KEY = 'avalon_os_nav';
   const root = document.documentElement;
@@ -132,7 +133,7 @@
     requestAnimationFrame(() => requestAnimationFrame(() => { clearTimeout(t); setTimeout(reveal, 120); }));
   } else point(here, true);
 
-  /* ---------- keyboard: G then H / S / R ---------- */
+  /* ---------- keyboard: G then H / S / R / T ---------- */
   let gAt = 0;
   window.addEventListener('keydown', e => {
     const a = document.activeElement;
